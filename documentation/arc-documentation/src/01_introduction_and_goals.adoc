@@ -1,0 +1,27 @@
+ifndef::imagesdir[:imagesdir: ../images]
+ifndef::relfileprefix[:relfileprefix: ../../]
+
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+=== Requirements Overview
+
+Introduction into the projects goals and basic requirements are described in the projects xref:{relfileprefix}README.adoc[README]
+file.
+
+=== Quality Goals
+
+[options="header", cols="1,3"]
+|===
+|Quality goal   | Motivation and explanation
+
+|===
+
+=== Stakeholders
+
+[options="header",cols="1,2,2"]
+|===
+|Role/Name|Contact|Expectations
+| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
+| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+|===
