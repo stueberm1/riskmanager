@@ -1,7 +1,15 @@
 = Risk Manager
 
-Is a tool to manage and track identified technical risks and depts in agile driven software projects.
-It su
+Is a tool to manage and track identified technical risks and -depts in agile driven software projects.
+It supports creation and assessment of risks. They can get prioritized and grouped to get them a context.
+
+Risks and risk-groups can get assigned to a project context, so the risks and technical depts can get managed for multiple
+projects in one instance.
+
+Riskmanager provides user-interfaces for direct interaction as well as apis for integration in any project management tool.
+
+Defined extension points allows to add custom and potentially proprietary tools and persistence options as
+plugin, without need to integrate them in the project directly.
 
 == Documentation
 
