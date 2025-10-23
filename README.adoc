@@ -1,0 +1,33 @@
+= Risk Manager
+
+Is a tool to manage and track identified technical risks and depts in agile driven software projects.
+It su
+
+== Documentation
+
+The documentation is placed in code using https://asciidoctor.org/[Asciidoc].
+
+The following documents are currently available:
+
+. link:https://github.com/users/stueberm1/projects/1/views/3[Backlog]
+. link:https://github.com/users/stueberm1/projects/1/views/4[Roadmap]
+. xref:documentation/arc-documentation/risk-manager-architecture-description.adoc[Architecture description]
+
+== Installation
+
+
+== Usage
+
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change. If the change meets goals of the project as well as the
+xref:documentation/arc-documentation/risk-manager-architecture-description.adoc[architecture constraints],
+I would like to integrate it.
+
+Please make sure to update tests as appropriate.
+
+## License
+
+link:LICENSE[Apache License 2.0]
