@@ -1,5 +1,5 @@
 = Risk Manager
-
+[[main-purpose]]
 Is a tool to manage and track identified technical risks and -depts in agile driven software projects.
 It supports creation and assessment of risks. They can get prioritized and grouped to get them a context.
 
@@ -11,6 +11,8 @@ Riskmanager provides user-interfaces for direct interaction as well as apis for 
 Defined extension points allows to add custom and potentially proprietary tools and persistence options as
 plugin, without need to integrate them in the project directly.
 
+.Overview of the core use-cases
+image::documentation/arc-documentation/images/01_introduction_and_goals/identified-use-cases.drawio.png[]
 == Documentation
 
 The documentation is placed in code using https://asciidoctor.org/[Asciidoc].

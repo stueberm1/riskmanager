@@ -6,14 +6,19 @@ ifndef::relfileprefix[:relfileprefix: ../../]
 
 === Requirements Overview
 
-Introduction into the projects goals and basic requirements are described in the projects xref:{relfileprefix}README.adoc[README]
-file.
+
+The main purpose of the software system is described in the initial xref:{reffileprefix}README.adoc#main-purpose[Readme].
+
 
 === Quality Goals
 
 [options="header", cols="1,3"]
 |===
-|Quality goal   | Motivation and explanation
+|Quality goal           | Motivation and explanation
+| easy integration      | We do not want to tell project-managers and software architects how to manage their projects. Therefor it provides java and web-apis to integrate it in existing tools.
+| easy introduction     | Any interface (web as well as java) is fully documented to allow users to integrate the tool in any way they need.
+| persistence agnostic  | We do not know how users want to use and integrate the tool, so it provides documented extension points to plugin filesystem based persistence as well as database bases persistence.
+| easy adaption         | We do not know how users need to track there technical risks and depts, so it provides extension points to adept the system to the needs of the concrete users.
 
 |===
 
@@ -22,6 +27,5 @@ file.
 [options="header",cols="1,2,2"]
 |===
 |Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+| Michael Stüber | _<Contact-1>_ | Software architect needs a tool for tracking and documenting technical risks in software projects.
 |===
