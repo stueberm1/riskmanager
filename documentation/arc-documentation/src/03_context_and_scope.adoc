@@ -13,8 +13,8 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 
 
-
-**<Diagram or Table>**
+.business view of the projects scope
+image::03_context_and_scope/business_scope.drawio.png[]
 
 **<optionally: Explanation of external domain interfaces>**
 

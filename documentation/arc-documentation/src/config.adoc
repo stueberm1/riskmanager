@@ -3,9 +3,10 @@
 :toc-title: table of contents
 
 // enable table-of-contents
-:toc:
+:toc: left
+:toclevels: 4
 
 // where are images located?
 :imagesdir: ./images
 :arc42help:
-:relfileprefix: ../
+:relfileprefix: ./
