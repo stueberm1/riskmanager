@@ -4,7 +4,8 @@ import java.util.Optional;
 
 /**
  *  = RiskIdentifier
- *  The `RiskIdentifier` identifies a risk or technical dept uniquely. The identifier has a incrementing number and
+ *
+ *  The {@code RiskIdentifier} identifies a risk or technical dept uniquely. The identifier has a incrementing number and
  *  might be combined with a context.
  *
  * @since 0.0.1
