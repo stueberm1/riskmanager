@@ -2,7 +2,7 @@
 
 [cols="1,3,3" options="header"]
 |===
-|Error code | Problem details                                           | Suggestions to fix
+|Error code | Details description                                       | Suggestions to fix
 |RISK-0001  | The id number assigned to a specific risk is zero or less | This is mostly an issue with the algorithm creating the next number. Check and fix the algorithm.
 
 |===

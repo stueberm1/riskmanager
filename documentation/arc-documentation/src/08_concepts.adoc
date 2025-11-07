@@ -5,21 +5,15 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 
 
-
-
-
 === _<Concept 1>_
 
 _<explanation>_
 
 
+<<<
+// 8.2 exception handling
+include::08_concepts/exception-handling-concept.adoc[]
 
-=== _<Concept 2>_
-
-_<explanation>_
-
-...
-
-=== _<Concept n>_
-
-_<explanation>_
+<<<
+// 8.3 Problem details
+include::08_concepts/problem-details-presentation.adoc[]
