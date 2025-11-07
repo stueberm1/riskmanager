@@ -6,25 +6,17 @@
 // configure EN settings for asciidoc
 include::src/config.adoc[]
 
-= image:arc42-logo.png[arc42] Template
+= Risk Manager
 :revnumber: {revnumber}
 :revdate: {revdate}
 :revremark: {revremark}
 :toc-title: Table of Contents
-
-//additional style for arc42 help callouts
-include::../../common/styles/arc42-help-style.adoc[]
-
 
 
 include::src/about-arc42.adoc[]
 
 // horizontal line
 ***
-
-
-
-
 
 // numbering from here on
 :numbered:

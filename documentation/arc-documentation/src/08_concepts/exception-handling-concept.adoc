@@ -1,0 +1,7 @@
+ifndef::imagesdir[:imagesdir: ../../images]
+
+[[section-concept-exception-handling]]
+=== Concept exception handling
+
+.Common structure of Exceptions in RiskManager
+image::08_concepts/exceptions/exception-structure.drawio.png[]
