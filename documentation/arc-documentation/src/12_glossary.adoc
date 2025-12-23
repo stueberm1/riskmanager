@@ -9,11 +9,31 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [cols="e,2e" options="header"]
 |===
-|Term |Definition
+|Term | Definition
+| aggregate root
+| see https://www.baeldung.com/cs/aggregate-root-ddd and https://martinfowler.com/bliki/DDD_Aggregate.html
 
-|<Term-1>
-|<definition-1>
+|[[dependency-injection]] Dependency injection
+| see https://en.wikipedia.org/wiki/Dependency_injection
 
-|<Term-2>
-|<definition-2>
+|[[plain-old-java-object]] Plain old java object
+| "Plain old java object" describes to implement business logic and rules using a common JDK object with a common object-oriented structure without dependencies to
+complex frameworks and libraries like Spring-Framework, JEE or Guava or Guice.
+In a strict interpretation also popular annotation-based code constructors as project-lombok or mapstruct are forbidden.
+see https://www.baeldung.com/java-pojo-class
+
+|POJO
+|see <<plain-old-java-object, Plain old java object>>
+
+|[[service-provider]] Service provider
+| External realization of a <<service-provider-interface, Service provider interface>>. It allows to realize and modify
+required subsystems independent and without affects to the core system. Service providers can be integrated into the
+core system using <<dependency-injection, Dependency injection>>
+
+|[[service-provider-interface]] Service provider interface
+|A defined extension  and injection point in the application, defining contracts for services provided outside the
+core system. see https://en.wikipedia.org/wiki/Service_provider_interface
+
+|SPI
+|see <<service-provider-interface, Service provider interface>>
 |===

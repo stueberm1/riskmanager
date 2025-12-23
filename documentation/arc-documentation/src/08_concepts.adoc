@@ -5,21 +5,14 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 
 
+<<<
+// 8.1 domain model
+include::08_concepts/riak-domain-model.adoc[]
 
+<<<
+// 8.2 exception handling
+include::08_concepts/exception-handling-concept.adoc[]
 
-
-=== _<Concept 1>_
-
-_<explanation>_
-
-
-
-=== _<Concept 2>_
-
-_<explanation>_
-
-...
-
-=== _<Concept n>_
-
-_<explanation>_
+<<<
+// 8.3 Problem details
+include::08_concepts/problem-details-presentation.adoc[]

@@ -1,0 +1,7 @@
+ifndef::imagesdir[:imagesdir: ../../images]
+
+[[concept-presentation-of-problem-details]]
+=== Presentation of problem details
+
+.Sketch of the problem details description document
+image::08_concepts/exceptions/presentation/error-code-description.drawio.png[]
