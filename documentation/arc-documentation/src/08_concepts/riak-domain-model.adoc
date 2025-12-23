@@ -1,0 +1,5 @@
+ifndef::imagesdir[:imagesdir: ../../images]
+=== Risk domain model
+
+.Overview of the domain model
+image::08_concepts/domain-model.drawio.png[domain-modeö]

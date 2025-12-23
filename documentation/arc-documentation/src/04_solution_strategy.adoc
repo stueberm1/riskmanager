@@ -3,6 +3,23 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
+.Solution strategy overview
+image::04_solution_strategy/service_stragegy.png[solution overview]
+
+The system gets a business core build around an abstract domain model defining the `Risk` and
+its core constraints (states and invariants).
+
+An abstract `RiskFactory` allows to replace a concrete `Risk` by configuration, which contributes to the <<quality-goals, goal>> of easy adaptability.
+
+The core service defines a service-provider interface as contract for persistence operations. The interface gets implemented
+by concrete persistence providers, e.g. supporting filesystem, relational databases, no-sql databases and many more.
+This contributes to the goal of getting a persistence agnostic system.
+
+The core system also defines system access points (ports) which serves as entry points for any kind of user-interfaces
+without effects to the specified core functionality.  This allows to use web-bases, command-line-interfaces, rest-interfaces,
+plugins to common integrated development environment, which contributes to easy integration as well as easy adaptability
+
+
 
 
 

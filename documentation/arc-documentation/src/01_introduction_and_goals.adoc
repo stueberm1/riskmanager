@@ -10,6 +10,7 @@ ifndef::relfileprefix[:relfileprefix: ../../]
 The main purpose of the software system is described in the initial xref:{reffileprefix}README.adoc#main-purpose[Readme].
 
 
+[[quality-goals]]
 === Quality Goals
 
 [options="header", cols="1,3"]
