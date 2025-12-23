@@ -9,10 +9,21 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [cols="e,2e" options="header"]
 |===
-|Term |
+|Term | Definition
+| aggregate root
+| see https://www.baeldung.com/cs/aggregate-root-ddd and https://martinfowler.com/bliki/DDD_Aggregate.html
 
 |[[dependency-injection]] Dependency injection
 | see https://en.wikipedia.org/wiki/Dependency_injection
+
+|[[plain-old-java-object]] Plain old java object
+| "Plain old java object" describes to implement business logic and rules using a common JDK object with a common object-oriented structure without dependencies to
+complex frameworks and libraries like Spring-Framework, JEE or Guava or Guice.
+In a strict interpretation also popular annotation-based code constructors as project-lombok or mapstruct are forbidden.
+see https://www.baeldung.com/java-pojo-class
+
+|POJO
+|see <<plain-old-java-object, Plain old java object>>
 
 |[[service-provider]] Service provider
 | External realization of a <<service-provider-interface, Service provider interface>>. It allows to realize and modify
