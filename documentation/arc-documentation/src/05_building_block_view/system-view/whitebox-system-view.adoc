@@ -17,6 +17,9 @@ Separating dependency injection and system configuration aspects from the core b
 
 The standalone service uses the http-api or a suitable web-framework with spring, while the plugin(s) integrates the risk-manager-core together with a suitable persistence provider directly.
 
+The component-library `risk-manager-common-types` allows to share custom types like the `RiskIdentifier` (primary key) between several components without
+exposing the internal structure of the core, which makes modifications easier.
+
 
 Contained Building Blocks::
 _<Description of contained building block (black boxes)>_
