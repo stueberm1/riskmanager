@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.stueberm1.riskmanager</groupId>
-            <artifactId>riskmanager-core</artifactId>
+            <artifactId>risk-manager-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
