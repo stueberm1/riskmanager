@@ -19,7 +19,7 @@ public abstract class RiskIdentifier implements Comparable<RiskIdentifier> {
      *
      * @return
      */
-    public String id() {
+    public final String id() {
         return idPrefix()
                 .map(prefix -> prefix + '-')
                 .map(prefix -> prefix + currentNumber)

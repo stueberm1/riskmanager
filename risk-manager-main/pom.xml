@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>risk-manager-main</artifactId>
-
+    <name>risk-manager</name>
     <dependencies>
         <dependency>
             <groupId>com.github.stueberm1.riskmanager</groupId>

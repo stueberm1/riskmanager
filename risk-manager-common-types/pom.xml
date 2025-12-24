@@ -9,6 +9,6 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>risk-manager-types</artifactId>
+    <artifactId>risk-manager-common-types</artifactId>
     <description>Shared component library containing common custom types to be shared in the different context of the risk-manager</description>
 </project>
