@@ -1,0 +1,23 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+==== Blackbox risk-manager-core
+
+
+[cols="1h,4a"]
+|===
+|Purpose/Responsibility|
+|Quality/Performance Characteristics|
+|Directory/File Location|
+|Fulfilled Requirements|
+|===
+
+
+interfaces::
+
+The risk-manager-core provides an incoming port as access-point for clients called `risk` and requires an outgoing port called `persistence`.
+
+While the risk-manager-core is responsible to provide everything to fulfill the contract (risk), the requirement (persistence) must be realized in the specified way by a suitable service provider, which needs to get injected by the overall system.
+
+
+.Visualization of the persistence provider interface
+image::05_building_block_view/coresystem/port-out-persistence.drawio.png[persistence outgoing/required port]
+

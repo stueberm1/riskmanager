@@ -13,6 +13,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 | aggregate root
 | see https://www.baeldung.com/cs/aggregate-root-ddd and https://martinfowler.com/bliki/DDD_Aggregate.html
 
+|CRUD
+|see https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
+
 |[[dependency-injection]] Dependency injection
 | see https://en.wikipedia.org/wiki/Dependency_injection
 

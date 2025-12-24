@@ -47,7 +47,7 @@
         <asciidoctorj.version>3.0.1</asciidoctorj.version>
     </properties>
     <modules>
-        <module>risk-manager-types</module>
+        <module>risk-manager-common-types</module>
         <module>risk-manager-core</module>
         <module>risk-manager-main</module>
     </modules>

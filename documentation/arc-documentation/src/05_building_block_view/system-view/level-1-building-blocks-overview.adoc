@@ -1,0 +1,6 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+
+include::whitebox-system-view.adoc[]
+
+include::blackbox-risk-manager-core.adoc[]
+

@@ -1,0 +1,29 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+=== White box Overall System
+
+.System-overview
+image::05_building_block_view/level1-overall-system-whitebox.drawio.png[system view]
+
+
+Motivation::
+
+The Service is build around its core functionality and model.
+
+Presentation and interactions aspects (concerns) are externalized and communicating with the core functionality using
+the provided ports only.
+
+Separating dependency injection and system configuration aspects from the core business functionality allows to use the core functionality as a standalone system/service (using the popular spring-framework) as well as in a plugin for several
+(Java-based) integrated development environments without modifications of the core.
+
+The standalone service uses the http-api or a suitable web-framework with spring, while the plugin(s) integrates the risk-manager-core together with a suitable persistence provider directly.
+
+The component-library `risk-manager-common-types` allows to share custom types like the `RiskIdentifier` (primary key) between several components without
+exposing the internal structure of the core, which makes modifications easier.
+
+
+Contained Building Blocks::
+_<Description of contained building block (black boxes)>_
+
+Important Interfaces::
+_<Description of important interfaces>_
+
