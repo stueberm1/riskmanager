@@ -11,4 +11,11 @@
 
     <artifactId>risk-manager-common-types</artifactId>
     <description>Shared component library containing common custom types to be shared in the different context of the risk-manager</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
 </project>

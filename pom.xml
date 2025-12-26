@@ -49,6 +49,7 @@
     <modules>
         <module>risk-manager-common-types</module>
         <module>risk-manager-core</module>
+        <module>risk-manager-core-spring-boot-starter</module>
         <module>risk-manager-main</module>
     </modules>
     <build>

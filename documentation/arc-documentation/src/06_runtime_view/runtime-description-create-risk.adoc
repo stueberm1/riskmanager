@@ -1,0 +1,6 @@
+ifndef::imagesdir[:imagesdir: ../../images]
+
+[[runtime-view-create-risk]]
+=== Runtime Create new risk
+.Activities to create a new risk with alternate paths
+image::06_runtime_view/create-new-risk-activity.drawio.png[create risk runtime view]

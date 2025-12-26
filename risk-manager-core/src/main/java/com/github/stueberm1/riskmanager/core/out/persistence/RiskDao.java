@@ -1,9 +1,5 @@
 package com.github.stueberm1.riskmanager.core.out.persistence;
 
-import com.github.stueberm1.riskmanager.core.model.risk.ContingencyPlanning;
-import com.github.stueberm1.riskmanager.core.model.risk.Description;
-import com.github.stueberm1.riskmanager.core.model.risk.Details;
-import com.github.stueberm1.riskmanager.core.model.risk.MitigationStrategy;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
@@ -30,10 +26,10 @@ public abstract class RiskDao {
     private final RiskIdentifier id;
     private final Severity severity;
     private final ProbabilityOfOccurrence probabilityOfOccurrence;
-    private final Description description;
-    private final Details details;
-    private final ContingencyPlanning contingencyPlanning;
-    private final MitigationStrategy mitigationStrategy;
+    private final String description;
+    private final String details;
+    private final String contingencyPlanning;
+    private final String mitigationStrategy;
 
 
     public RiskIdentifier id() {
@@ -48,19 +44,19 @@ public abstract class RiskDao {
         return probabilityOfOccurrence;
     }
 
-    public Description description() {
+    public String description() {
         return description;
     }
 
-    public Details details() {
+    public String details() {
         return details;
     }
 
-    public Optional<ContingencyPlanning> contingencyPlanning() {
+    public Optional<String> contingencyPlanning() {
         return Optional.of(contingencyPlanning);
     }
 
-    public Optional<MitigationStrategy> getMitigationStrategy() {
+    public Optional<String> getMitigationStrategy() {
         return Optional.of(mitigationStrategy);
     }
 
@@ -131,8 +127,8 @@ public abstract class RiskDao {
             return self();
         }
 
-        private Description description;
-        public T havingDescription(Description description) {
+        private String description;
+        public T havingDescription(String description) {
             this.description = description;
             return self();
         }
@@ -149,20 +145,20 @@ public abstract class RiskDao {
             return self();
         }
 
-        private Details details;
-        public T withDetailedInformation(Details details) {
+        private String details;
+        public T withDetailedInformation(String details) {
             this.details = details;
             return self();
         }
 
-        private ContingencyPlanning contingencyPlanning;
-        public T contingencyPlanning(ContingencyPlanning contingencyPlanning) {
+        private String contingencyPlanning;
+        public T contingencyPlanning(String contingencyPlanning) {
             this.contingencyPlanning = contingencyPlanning;
             return self();
         }
 
-        private MitigationStrategy mitigationStrategy;
-        public T mitigationStrategy(MitigationStrategy mitigationStrategy) {
+        private String mitigationStrategy;
+        public T mitigationStrategy(String mitigationStrategy) {
             this.mitigationStrategy = mitigationStrategy;
             return self();
         }

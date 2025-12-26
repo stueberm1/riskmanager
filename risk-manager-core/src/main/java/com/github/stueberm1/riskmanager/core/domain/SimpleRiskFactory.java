@@ -1,0 +1,38 @@
+package com.github.stueberm1.riskmanager.core.domain;
+
+import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
+import com.github.stueberm1.riskmanager.core.model.risk.*;
+import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
+
+public class SimpleRiskFactory implements RiskFactory {
+
+    @Override
+    public Risk create(RiskTO risk) {
+        return SimpleRisk.builder()
+                .hasId(risk.id())
+                .withSeverity(risk.severity())
+                .probabilityOfOccurrence(risk.probabilityOfOccurrence())
+                .havingDescription(SimpleDescription.ofValue(risk.description()))
+                .withDetailedInformation(SimpleDetails.ofValue(risk.details()))
+                .contingencyPlanning(SimpleContingencyPlanningDescription.ofValue(risk.contingencyPlanning()))
+                .mitigationStrategy(SimpleMitigationStrategyDescription.ofValue(risk.mitigationStrategy()))
+                .build();
+    }
+
+    @Override
+    public Risk create(RiskDao risk) {
+        SimpleRisk.Builder builder = SimpleRisk.builder()
+                .hasId(risk.id())
+                .withSeverity(risk.severity())
+                .probabilityOfOccurrence(risk.probabilityOfOccurrence())
+                .havingDescription(SimpleDescription.ofValue(risk.description()))
+                .withDetailedInformation(SimpleDetails.ofValue(risk.details()));
+        risk.contingencyPlanning()
+                .map(SimpleContingencyPlanningDescription::ofValue)
+                .ifPresent(builder::contingencyPlanning);
+        risk.getMitigationStrategy()
+                .map(SimpleMitigationStrategyDescription::ofValue)
+                .ifPresent(builder::mitigationStrategy);
+        return builder.build();
+    }
+}

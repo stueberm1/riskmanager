@@ -1,5 +1,10 @@
 package com.github.stueberm1.riskmanager.types.risk;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Optional;
 
 /**
@@ -32,7 +37,7 @@ public abstract class RiskIdentifier implements Comparable<RiskIdentifier> {
      */
     protected abstract Optional<String> idPrefix();
 
-    private RiskIdentifier(Builder<?> builder) {
+    protected RiskIdentifier(Builder<?> builder) {
         this.currentNumber = requiresGreaterZero(builder.currentNumber);
     }
 
@@ -46,6 +51,29 @@ public abstract class RiskIdentifier implements Comparable<RiskIdentifier> {
     @Override
     public int compareTo(RiskIdentifier o) {
         return Long.compare(currentNumber, o.currentNumber);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RiskIdentifier that = (RiskIdentifier) o;
+
+        return new EqualsBuilder().append(currentNumber, that.currentNumber).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(currentNumber).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("currentNumber", currentNumber)
+                .toString();
     }
 
     /**

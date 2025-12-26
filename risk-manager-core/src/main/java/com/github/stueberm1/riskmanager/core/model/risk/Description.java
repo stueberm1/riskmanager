@@ -1,6 +1,10 @@
 package com.github.stueberm1.riskmanager.core.model.risk;
 
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -90,5 +94,28 @@ public abstract class Description {
         }
 
         return violations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Description that = (Description) o;
+
+        return new EqualsBuilder().append(content, that.content).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(content).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("content", content)
+                .toString();
     }
 }
