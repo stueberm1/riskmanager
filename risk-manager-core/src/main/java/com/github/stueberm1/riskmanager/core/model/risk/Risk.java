@@ -8,6 +8,8 @@ import com.github.stueberm1.riskmanager.types.risk.Severity;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Optional;
 
@@ -151,6 +153,19 @@ public abstract class Risk {
         return new HashCodeBuilder(17, 37).append(id)
                 .append(severity).append(probabilityOfOccurrence).append(description)
                 .append(details).append(contingencyPlanning).append(mitigationStrategy).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("id", id)
+                .append("severity", severity)
+                .append("probabilityOfOccurrence", probabilityOfOccurrence)
+                .append("description", description)
+                .append("details", details)
+                .append("contingencyPlanning", contingencyPlanning)
+                .append("mitigationStrategy", mitigationStrategy)
+                .toString();
     }
 
     /// The {@code Builder} enforces the business rules for the abstract {@link Risk}. It is a container for

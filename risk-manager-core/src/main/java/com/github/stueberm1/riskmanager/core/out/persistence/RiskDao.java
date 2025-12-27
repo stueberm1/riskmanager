@@ -3,6 +3,9 @@ package com.github.stueberm1.riskmanager.core.out.persistence;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Optional;
 
@@ -90,7 +93,50 @@ public abstract class RiskDao {
         this.probabilityOfOccurrence =  requireNonNull(builder.probabilityOfOccurrence, "probability of occurrence");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RiskDao riskDao = (RiskDao) o;
+
+        return new EqualsBuilder()
+                .append(id, riskDao.id)
+                .append(severity, riskDao.severity)
+                .append(probabilityOfOccurrence, riskDao.probabilityOfOccurrence)
+                .append(description, riskDao.description)
+                .append(details, riskDao.details)
+                .append(contingencyPlanning, riskDao.contingencyPlanning)
+                .append(mitigationStrategy, riskDao.mitigationStrategy)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(severity)
+                .append(probabilityOfOccurrence)
+                .append(description)
+                .append(details)
+                .append(contingencyPlanning)
+                .append(mitigationStrategy)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("severity", severity)
+                .append("probabilityOfOccurrence", probabilityOfOccurrence)
+                .append("description", description)
+                .append("details", details)
+                .append("contingencyPlanning", contingencyPlanning)
+                .append("mitigationStrategy", mitigationStrategy)
+                .toString();
+    }
 
     /// The {@code Builder} enforces the business rules for the abstract {@link RiskDao}. It is a container for
     /// all configuration parameters which are required to build a {@code RiskDao}.

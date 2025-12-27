@@ -1,7 +1,8 @@
 package com.github.stueberm1.riskmanager.types.risk;
-import com.github.stueberm1.riskmanager.types.RiskManagerException;
 
 import static java.util.Objects.requireNonNull;
+
+import com.github.stueberm1.riskmanager.types.RiskManagerException;
 
 import java.util.LinkedList;
 import java.util.List;
