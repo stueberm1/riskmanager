@@ -1,14 +1,8 @@
 package com.github.stueberm1.riskmanager.core.test.application.risk;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.doNothing;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
-
 import com.github.stueberm1.riskmanager.core.application.risk.ModelAdaptingRiskServiceFacade;
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
+import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
@@ -25,6 +19,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.times;
+
 @ExtendWith(MockitoExtension.class)
 class RiskServiceTest {
 
@@ -33,6 +32,9 @@ class RiskServiceTest {
 
     @Mock
     private CreateRisk createRisk;
+
+    @Mock
+    private RiskReader riskReader;
 
     private ModelAdaptingRiskServiceFacade modelAdaptingRiskServiceFacade;
 
@@ -48,6 +50,7 @@ class RiskServiceTest {
         modelAdaptingRiskServiceFacade = ModelAdaptingRiskServiceFacade.builder()
                 .riskFactory(riskFactory)
                 .createRisk(createRisk)
+                .riskReader(riskReader)
                 .build();
     }
 
@@ -96,5 +99,34 @@ class RiskServiceTest {
                 .mitigationStrategy(SimpleMitigationStrategyDescription.ofValue(inArgument.mitigationStrategy()))
                 .build();
 
+    }
+
+
+
+    public static final Risk TEST_RISK = SimpleRisk.builder()
+            .hasId(TEST_ID)
+            .withSeverity(Severity.VERY_HIGH)
+            .probabilityOfOccurrence(ProbabilityOfOccurrence.LOW)
+            .havingDescription(SimpleDescription.ofValue(DESCRIPTION))
+            .withDetailedInformation(SimpleDetails.ofValue(DETAILS))
+            .contingencyPlanning(SimpleContingencyPlanningDescription.ofValue(CONTINGENCY_PLANNING))
+            .mitigationStrategy(SimpleMitigationStrategyDescription.ofValue(MITIGATION_STRATEGY))
+            .build();
+
+    @Nested
+    class ReadRisk {
+
+        @Test
+        void testReadExistingRisk() {
+            given(riskReader.read(TEST_ID)).willReturn(TEST_RISK);
+            assertThat(modelAdaptingRiskServiceFacade.get(TEST_ID)).isEqualTo(convert(TEST_RISK));
+        }
+
+    }
+
+    static RiskTO convert(final Risk risk) {
+        return new RiskTO(risk.id(), risk.severity(), risk.probabilityOfOccurrence(), risk.description().value(),
+                risk.details().detailContent(), risk.contingencyPlanning().map(ContingencyPlanning::plan).orElse(null),
+                risk.getMitigationStrategy().map(MitigationStrategy::strategy).orElse(null));
     }
 }

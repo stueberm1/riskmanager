@@ -1,6 +1,7 @@
 package com.github.stueberm1.riskmanager.core.out.persistence;
 
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+
 import java.util.List;
 import java.util.Optional;
 

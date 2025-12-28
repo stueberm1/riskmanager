@@ -1,12 +1,5 @@
 package com.github.stueberm1.riskmanager.core.test.application.risk.create;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.doNothing;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
-
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRiskPersistenceAdapter;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
@@ -24,6 +17,13 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 /// Test of the {@link CreateRiskPersistenceAdapter}.
 @ExtendWith(MockitoExtension.class)

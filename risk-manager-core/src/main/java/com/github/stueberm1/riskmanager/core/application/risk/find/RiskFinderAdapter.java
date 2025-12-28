@@ -1,12 +1,13 @@
 package com.github.stueberm1.riskmanager.core.application.risk.find;
 
-import static java.util.Objects.requireNonNull;
-
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.model.risk.Risk;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 public class RiskFinderAdapter implements RiskFinder {
 

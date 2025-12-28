@@ -1,13 +1,13 @@
 package com.github.stueberm1.riskmanager.core.application.risk.create;
 
-import static java.util.Objects.requireNonNull;
-
 import com.github.stueberm1.riskmanager.core.model.risk.ContingencyPlanning;
 import com.github.stueberm1.riskmanager.core.model.risk.MitigationStrategy;
 import com.github.stueberm1.riskmanager.core.model.risk.Risk;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
 import com.github.stueberm1.riskmanager.core.out.persistence.SimpleRiskDao;
+
+import static java.util.Objects.requireNonNull;
 
 /// The {@code CreateRiskPersistenceAdapter} decouples the use-case realization of {@link CreateRisk} from the
 /// definition of the persistence layer and hides the internal realization of the domain-model ({@link Risk}) from the
