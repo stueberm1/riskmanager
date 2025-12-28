@@ -1,17 +1,17 @@
 package com.github.stueberm1.riskmanager.core.model.risk;
 
-import static java.util.Objects.requireNonNull;
-
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
-import com.github.stueberm1.riskmanager.types.risk.Severity;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+import com.github.stueberm1.riskmanager.types.risk.Severity;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 ///  
 /// A {@code Risk} in a (software-)project is regularly something which needs to get decided with a lack of information

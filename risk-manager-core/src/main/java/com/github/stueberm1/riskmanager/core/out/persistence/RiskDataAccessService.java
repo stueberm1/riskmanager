@@ -1,6 +1,7 @@
 package com.github.stueberm1.riskmanager.core.out.persistence;
 
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +22,14 @@ public interface RiskDataAccessService {
     /// @param id Identifies the risk, which should be removed from the repository
     void delete(RiskIdentifier id);
 
-    /// Read the details about s risk identified by given identifier.
+    /// looks for the details about a risk identified by given identifier.
     /// If no risk was persisted with given id before, the operation **must** return an
     /// {@link Optional#empty()}.
     /// The application decides how to handle the empty-result.
     ///
     /// @param id Identifies the risk, the application require details for.
     /// @return the details about the risk as simple data access object, if available
-    Optional<RiskDao> read(RiskIdentifier id);
+    Optional<RiskDao> find(RiskIdentifier id);
 
     /// Lists the information of all risks persisted in the repository
     ///

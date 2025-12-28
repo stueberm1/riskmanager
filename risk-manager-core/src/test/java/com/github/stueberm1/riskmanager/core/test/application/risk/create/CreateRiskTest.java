@@ -1,16 +1,8 @@
 package com.github.stueberm1.riskmanager.core.test.application.risk.create;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.create.IdValidatingCreateRisk;
-import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
+import com.github.stueberm1.riskmanager.core.application.risk.find.RiskFinder;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
@@ -28,13 +20,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+
 @ExtendWith(MockitoExtension.class)
 class CreateRiskTest {
 
     @Mock
     private CreateRisk createRiskPersistenceAdapter;
     @Mock
-    private RiskReader riskReadingAdapter;
+    private RiskFinder riskReadingAdapter;
 
     @InjectMocks
     private IdValidatingCreateRisk idValidatingCreateRisk;
@@ -64,14 +64,14 @@ class CreateRiskTest {
     @Test
     @DisplayName("Create Risk checks for existing Risk with same Id")
     void checkRiskIdentifierIsUnique() {
-        given(riskReadingAdapter.read(any())).willReturn(Optional.empty());
+        given(riskReadingAdapter.find(any())).willReturn(Optional.empty());
 
         //when
         idValidatingCreateRisk.save(TEST_RISK);
 
         then(riskReadingAdapter)
                 .should(times(1))
-                .read(riskIdentifierCaptor.capture());
+                .find(riskIdentifierCaptor.capture());
         assertThat(riskIdentifierCaptor.getValue()).isNotNull().isEqualTo(TEST_ID);
     }
 
@@ -81,7 +81,7 @@ class CreateRiskTest {
     @Test
     @DisplayName("The Risk gets saved, if no Risk with same Id exists")
     void aValidRiskUniqueIdentifierGetsSaved() {
-        given(riskReadingAdapter.read(any())).willReturn(Optional.empty());
+        given(riskReadingAdapter.find(any())).willReturn(Optional.empty());
 
         //when
         idValidatingCreateRisk.save(TEST_RISK);
@@ -99,7 +99,7 @@ class CreateRiskTest {
                         .mitigationStrategy(TEST_RISK.getMitigationStrategy().orElse(null))
                                 .build();
 
-        given(riskReadingAdapter.read(any())).willReturn(Optional.of(mockResponse));
+        given(riskReadingAdapter.find(any())).willReturn(Optional.of(mockResponse));
 
         // when
         idValidatingCreateRisk.save(TEST_RISK);
@@ -115,7 +115,7 @@ class CreateRiskTest {
                 .withDetailedInformation(TEST_RISK.details())
                 .build();
 
-        given(riskReadingAdapter.read(any())).willReturn(Optional.of(mockResponse));
+        given(riskReadingAdapter.find(any())).willReturn(Optional.of(mockResponse));
 
         //when
         assertThatExceptionOfType(RiskIdentifierAlreadyInUseException.class)

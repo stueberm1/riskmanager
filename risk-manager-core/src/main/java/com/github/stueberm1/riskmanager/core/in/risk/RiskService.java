@@ -3,7 +3,6 @@ package com.github.stueberm1.riskmanager.core.in.risk;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RiskService {
 
@@ -15,6 +14,8 @@ public interface RiskService {
     /// @throws com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException
     ///     if one or more values of the Risk violates a given business constraint
     void createRisk(RiskTO newRisk);
+
+    /// @throws RiskNotFoundException if there is no risk persisted having the requested {@link RiskIdentifier}
     RiskTO get(RiskIdentifier id);
     List<RiskTO> listAll();
 }
