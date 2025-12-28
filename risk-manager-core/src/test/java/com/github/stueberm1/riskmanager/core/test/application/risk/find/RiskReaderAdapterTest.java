@@ -1,8 +1,11 @@
 package com.github.stueberm1.riskmanager.core.test.application.risk.find;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReaderAdapter;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
@@ -85,13 +88,26 @@ public class RiskReaderAdapterTest {
                 .contingencyPlanning(CONTINGENCY_PLANNING)
                 .build();
         given(riskDataAccessService.read(any())).willReturn(Optional.of(mockRiskDao));
-        given(riskFactory.create(any())).willReturn()
+        given(riskFactory.create(any(RiskDao.class))).willReturn(convert(mockRiskDao));
 
         //when
         riskReaderAdapter.read(TEST_ID);
 
+        then(riskFactory).should(times(1)).create(riskDaoCaptor.capture());
+        assertThat(riskDaoCaptor.getValue()).isInstanceOf(RiskDao.class).isEqualTo(mockRiskDao);
     }
 
+    private static Risk convert(RiskDao inArgument) {
+        SimpleRisk.Builder builder = SimpleRisk.builder()
+                .hasId(inArgument.id())
+                .withSeverity(inArgument.severity())
+                .probabilityOfOccurrence(inArgument.probabilityOfOccurrence())
+                .havingDescription(SimpleDescription.ofValue(inArgument.description()))
+                .withDetailedInformation(SimpleDetails.ofValue(inArgument.details()));
 
+        inArgument.contingencyPlanning().map(SimpleContingencyPlanningDescription::ofValue).ifPresent(builder::contingencyPlanning);
+        inArgument.getMitigationStrategy().map(SimpleMitigationStrategyDescription::ofValue).ifPresent(builder::mitigationStrategy);
+        return builder.build();
+    }
 
 }
