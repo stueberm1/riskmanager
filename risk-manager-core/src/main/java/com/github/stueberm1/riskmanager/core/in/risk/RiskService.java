@@ -15,6 +15,6 @@ public interface RiskService {
     /// @throws com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException
     ///     if one or more values of the Risk violates a given business constraint
     void createRisk(RiskTO newRisk);
-    Optional<RiskTO> get(RiskIdentifier id);
+    RiskTO get(RiskIdentifier id);
     List<RiskTO> listAll();
 }

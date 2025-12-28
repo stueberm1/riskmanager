@@ -71,6 +71,24 @@ class RiskFactoryTest {
                     .allMatch(violation -> "risk.description".equalsIgnoreCase(violation.path()))
                     .allMatch(violation -> "Description must have at least 10 characters length".equalsIgnoreCase(violation.violation()));
         }
+
+        @ParameterizedTest
+        @MethodSource("com.github.stueberm1.riskmanager.core.test.domain.RiskFactoryTest#longStringDescriptions")
+        void serviceRejectsDescriptionsBeingToLongToBeAGoodDescription(String description) {
+            RiskTO inputParam = new RiskTO(TEST_ID, Severity.MEDIUM, ProbabilityOfOccurrence.LOW, description,
+                    "Some more specific details and consequences", "Crying and panic",
+                    "We need to define limits and monitor the metrics, so that we can intervene at time");
+            assertThatExceptionOfType(EntityConstraintViolationException.class)
+                    .isThrownBy(() -> riskFactory.create(inputParam))
+                    .withMessage(EntityConstraintViolationException.MESSAGE)
+                    .hasFieldOrPropertyWithValue("entityType", Risk.class)
+                    .extracting(EntityConstraintViolationException::violations)
+                    .asInstanceOf(list(EntityConstraintViolationException.EntityConstraintViolation.class))
+                    .isNotNull()
+                    .size().isEqualTo(1).returnToIterable()
+                    .allMatch(violation -> "risk.description".equalsIgnoreCase(violation.path()))
+                    .allMatch(violation -> "Description must have at most 50 characters length".equalsIgnoreCase(violation.violation()));
+        }
     }
 
     static Stream<String> shortStringDescriptions() {
@@ -81,8 +99,14 @@ class RiskFactoryTest {
     }
 
     static String stringOfLength(int stringLength) {
-        return StringUtils.repeat("*", stringLength);
+        return StringUtils.repeat("A", stringLength);
     }
+
+    static Stream<String> longStringDescriptions() {
+        return IntStream.range(51, 55).mapToObj(RiskFactoryTest::stringOfLength);
+    }
+
+
 
     @Nested
     @DisplayName("Create Risks  from persistence provider using the data access object")
