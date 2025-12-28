@@ -1,0 +1,22 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+=== White box risk-manager-core
+
+.White box view of risk-manager-core
+image::05_building_block_view/coresystem/whitebox-risk-manager-core.drawio.png[white box view risk-manager-core]
+
+Motivation::
+
+The core is split of by basic core functionality and inner system configuration (dependency injection).
+This allows to replace the dependency injection framework by another one (e.g. spring-boot vs. guice) without touching inner core.
+
+This also allows to configure the system using pure java without any enterprise class framework also without touching the inner core.
+
+The starter is defined to be part of the core application, so it can access and configure the inner parts of the inner core without breaking the blackbox. This concept is mostly like the "friends"-concept of C++ and allows to decouple the technical aspects of configuring the core from providing the core functionality.
+
+The inner core is also split up into a building block per use-case, which increases testability, repeatability and adaptability without side effects.
+
+Contained Building Blocks::
+_<Description of contained building block (black boxes)>_
+
+Important Interfaces::
+_<Description of important interfaces>_

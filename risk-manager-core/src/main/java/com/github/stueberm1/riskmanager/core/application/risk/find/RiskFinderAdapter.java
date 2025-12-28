@@ -8,18 +8,18 @@ import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessServi
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import java.util.Optional;
 
-public class RiskReaderAdapter implements RiskReader {
+public class RiskFinderAdapter implements RiskFinder {
 
     private final RiskDataAccessService riskDataAccessService;
     private final RiskFactory riskFactory;
 
-    public RiskReaderAdapter(RiskDataAccessService riskDataAccessService, RiskFactory riskFactory) {
+    public RiskFinderAdapter(RiskDataAccessService riskDataAccessService, RiskFactory riskFactory) {
         this.riskDataAccessService = requireNonNull(riskDataAccessService, "riskDataAccessService");
         this.riskFactory = requireNonNull(riskFactory, "riskFactory");
     }
 
     @Override
-    public Optional<Risk> read(RiskIdentifier id) {
-        return riskDataAccessService.read(id).map(riskFactory::create);
+    public Optional<Risk> find(RiskIdentifier id) {
+        return riskDataAccessService.find(id).map(riskFactory::create);
     }
 }

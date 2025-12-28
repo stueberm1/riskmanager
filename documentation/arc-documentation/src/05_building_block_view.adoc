@@ -11,8 +11,15 @@ include::05_building_block_view/system-view/whitebox-system-view.adoc[]
 
 === Level 2
 
+<<<
+// whitebox-riskmanager-core
+include::05_building_block_view/core-system/whitebox-risk-manager-core.adoc[]
+
 
 
 === Level 3
 
+<<<
+// whitebox-riskmanager-core-find-risk
+include::05_building_block_view/core-system/whitebox-list-manager-core-read-risk.adoc[]
 

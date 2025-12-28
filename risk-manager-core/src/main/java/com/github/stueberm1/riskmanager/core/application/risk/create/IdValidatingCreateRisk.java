@@ -1,6 +1,6 @@
 package com.github.stueberm1.riskmanager.core.application.risk.create;
 
-import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
+import com.github.stueberm1.riskmanager.core.application.risk.find.RiskFinder;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
 import com.github.stueberm1.riskmanager.core.model.risk.Risk;
 
@@ -9,9 +9,9 @@ import java.util.Optional;
 public class IdValidatingCreateRisk implements CreateRisk {
 
     private final CreateRisk createRiskPersistenceAdapter;
-    private final RiskReader riskReadingAdapter;
+    private final RiskFinder riskReadingAdapter;
 
-    public IdValidatingCreateRisk(CreateRisk createRiskPersistenceAdapter, RiskReader riskReadingAdapter) {
+    public IdValidatingCreateRisk(CreateRisk createRiskPersistenceAdapter, RiskFinder riskReadingAdapter) {
         this.createRiskPersistenceAdapter = createRiskPersistenceAdapter;
         this.riskReadingAdapter = riskReadingAdapter;
     }
@@ -19,7 +19,7 @@ public class IdValidatingCreateRisk implements CreateRisk {
     @Override
     public void save(Risk newRisk) {
 
-        Optional<Risk> existingRisk = riskReadingAdapter.read(newRisk.id());
+        Optional<Risk> existingRisk = riskReadingAdapter.find(newRisk.id());
         if(existingRisk.isPresent()) {
             handleDuplicateId(existingRisk.get(), newRisk);
         } else {

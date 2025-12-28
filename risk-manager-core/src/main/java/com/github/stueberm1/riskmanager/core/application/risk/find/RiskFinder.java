@@ -5,6 +5,6 @@ import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 
 import java.util.Optional;
 
-public interface RiskReader {
-    Risk read(RiskIdentifier id);
+public interface RiskFinder {
+    Optional<Risk> find(RiskIdentifier id);
 }

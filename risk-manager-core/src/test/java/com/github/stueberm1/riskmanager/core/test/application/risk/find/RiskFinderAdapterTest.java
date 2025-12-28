@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
-import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReaderAdapter;
+import com.github.stueberm1.riskmanager.core.application.risk.find.RiskFinderAdapter;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
@@ -28,9 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-///  Test of the {@link com.github.stueberm1.riskmanager.core.application.risk.find.RiskReaderAdapter}
+///  Test of the {@link RiskFinderAdapter}
 @ExtendWith(MockitoExtension.class)
-public class RiskReaderAdapterTest {
+public class RiskFinderAdapterTest {
 
     @Mock
     private RiskDataAccessService riskDataAccessService;
@@ -38,19 +38,19 @@ public class RiskReaderAdapterTest {
     private RiskFactory riskFactory;
 
     @InjectMocks
-    private RiskReaderAdapter riskReaderAdapter;
+    private RiskFinderAdapter riskReaderAdapter;
 
     @Test
     @DisplayName("RiskReaderAdapter cannot initialized without riskDataAccessService")
     void riskReaderAdapterCreationFailsWithoutRiskDataAccessService() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new RiskReaderAdapter(null, riskFactory))
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new RiskFinderAdapter(null, riskFactory))
                 .withMessage("riskDataAccessService");
     }
 
     @Test
     @DisplayName("RiskReaderAdapter cannot initialized without riskFactory")
     void riskReaderAdapterCreationFailsWithoutRiskFactory() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new RiskReaderAdapter(riskDataAccessService, null))
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new RiskFinderAdapter(riskDataAccessService, null))
                 .withMessage("riskFactory");
     }
 
@@ -77,7 +77,7 @@ public class RiskReaderAdapterTest {
 
     @Test
     @DisplayName("A complete risk can be can be fully restored")
-    void givenACompletePersistentRisk_whenCallRead_thenTheRiskGetsFullyRestored() {
+    void givenACompletePersistentRisk_whenCallFind_thenTheRiskGetsFullyRestored() {
         RiskDao mockRiskDao = SimpleRiskDao.builder()
                 .hasId(TEST_ID)
                 .withSeverity(Severity.MEDIUM)
@@ -87,11 +87,11 @@ public class RiskReaderAdapterTest {
                 .mitigationStrategy(MITIGATION_STRATEGY)
                 .contingencyPlanning(CONTINGENCY_PLANNING)
                 .build();
-        given(riskDataAccessService.read(any())).willReturn(Optional.of(mockRiskDao));
+        given(riskDataAccessService.find(any())).willReturn(Optional.of(mockRiskDao));
         given(riskFactory.create(any(RiskDao.class))).willReturn(convert(mockRiskDao));
 
         //when
-        riskReaderAdapter.read(TEST_ID);
+        riskReaderAdapter.find(TEST_ID);
 
         then(riskFactory).should(times(1)).create(riskDaoCaptor.capture());
         assertThat(riskDaoCaptor.getValue()).isInstanceOf(RiskDao.class).isEqualTo(mockRiskDao);

@@ -1,0 +1,8 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+=== White box risk-manager-core.find-risk
+
+.White box view of the find-risk building block
+image::05_building_block_view/coresystem/whiteboardrisk-manager-core-read-risk.drawing.png[find-risk]
+
+Motivation::
+Reading known `Risk` is quite simple. The only interesting part is, that the core-service must check that the requested risk exists. Since the `ReadRisk` use-case specifies a requested `Risk` **must** exist, an exception is thrown if not.
