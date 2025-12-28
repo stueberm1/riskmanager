@@ -1,5 +1,8 @@
 package com.github.stueberm1.riskmanager.types.risk;
+
 import static java.util.Objects.requireNonNull;
+
+import com.github.stueberm1.riskmanager.types.RiskManagerException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +21,7 @@ import java.util.List;
 /// of informing them violation by violation., so they can achieve there goals with less pain.
 /// @see "https://beanvalidation.org/4.0/"
 /// @see "https://jakarta.ee/specifications/bean-validation/4.0/apidocs/jakarta.validation/jakarta/validation/constraintviolationexception"
-public class EntityConstraintViolationException extends RuntimeException {
+public class EntityConstraintViolationException extends RiskManagerException {
 
     /**
      * the Defined message string of the {@code EntityConstraintViolationException}. If not replaced by exception handling,

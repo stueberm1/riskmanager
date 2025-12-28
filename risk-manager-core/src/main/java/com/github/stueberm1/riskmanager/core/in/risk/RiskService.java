@@ -1,0 +1,20 @@
+package com.github.stueberm1.riskmanager.core.in.risk;
+
+import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface RiskService {
+
+    ///
+    /// @throws com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException
+    ///         If the `RiskIdentifier` does not meet the requirements.
+    /// @throws RiskIdentifierAlreadyInUseException
+    ///         if the client tries to define a risk with a blocked id
+    /// @throws com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException
+    ///     if one or more values of the Risk violates a given business constraint
+    void createRisk(RiskTO newRisk);
+    RiskTO get(RiskIdentifier id);
+    List<RiskTO> listAll();
+}

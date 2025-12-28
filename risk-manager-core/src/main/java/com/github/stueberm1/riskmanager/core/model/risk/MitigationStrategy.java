@@ -1,4 +1,6 @@
 package com.github.stueberm1.riskmanager.core.model.risk;
 
-public class MitigationStrategy {
+public interface MitigationStrategy {
+
+    String strategy();
 }

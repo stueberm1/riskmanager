@@ -6,6 +6,11 @@ import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationExce
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Optional;
 
 ///  
@@ -77,11 +82,11 @@ public abstract class Risk {
     }
 
     public Optional<ContingencyPlanning> contingencyPlanning() {
-        return Optional.of(contingencyPlanning);
+        return Optional.ofNullable(contingencyPlanning);
     }
 
     public Optional<MitigationStrategy> getMitigationStrategy() {
-        return Optional.of(mitigationStrategy);
+        return Optional.ofNullable(mitigationStrategy);
     }
 
     /// The abstract constructor takes a realization of the abstract {@link Builder} as argument to create a consistent
@@ -128,6 +133,40 @@ public abstract class Risk {
     /// gets violated
     protected abstract void validate() throws EntityConstraintViolationException;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Risk risk = (Risk) o;
+
+        return new EqualsBuilder().append(id, risk.id)
+                .append(severity, risk.severity).append(probabilityOfOccurrence, risk.probabilityOfOccurrence)
+                .append(description, risk.description).append(details, risk.details)
+                .append(contingencyPlanning, risk.contingencyPlanning)
+                .append(mitigationStrategy, risk.mitigationStrategy).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(id)
+                .append(severity).append(probabilityOfOccurrence).append(description)
+                .append(details).append(contingencyPlanning).append(mitigationStrategy).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("id", id)
+                .append("severity", severity)
+                .append("probabilityOfOccurrence", probabilityOfOccurrence)
+                .append("description", description)
+                .append("details", details)
+                .append("contingencyPlanning", contingencyPlanning)
+                .append("mitigationStrategy", mitigationStrategy)
+                .toString();
+    }
 
     /// The {@code Builder} enforces the business rules for the abstract {@link Risk}. It is a container for
     /// all configuration parameters which are required to build a {@code Risk}.
