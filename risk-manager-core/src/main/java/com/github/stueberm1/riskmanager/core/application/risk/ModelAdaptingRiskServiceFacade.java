@@ -2,6 +2,7 @@ package com.github.stueberm1.riskmanager.core.application.risk;
 
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
+import com.github.stueberm1.riskmanager.core.application.risk.list.Risks;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
@@ -22,6 +23,8 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
 
     private final RiskReader riskReader;
 
+    private final Risks risks;
+
     @Override
     public void createRisk(RiskTO newRisk) {
         createRisk.save(riskFactory.create(newRisk));
@@ -40,7 +43,7 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
 
     @Override
     public List<RiskTO> listAll() {
-        return List.of();
+        return risks.listAll().stream().map(ModelAdaptingRiskServiceFacade::convert).toList();
     }
 
     public static Builder builder() {
@@ -51,6 +54,7 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
         this.riskFactory = requireNonNull(builder.riskFactory, "riskFactory");
         this.createRisk = requireNonNull(builder.createRisk, "createRisk");
         this.riskReader = requireNonNull(builder.riskReader, "riskReader");
+        this.risks = requireNonNull(builder.risks, "risks");
     }
 
     public static final class Builder {
@@ -70,6 +74,12 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
         private RiskReader riskReader;
         public Builder riskReader(RiskReader riskReader) {
             this.riskReader = riskReader;
+            return this;
+        }
+
+        private Risks risks;
+        public Builder risks(Risks risks) {
+            this.risks = risks;
             return this;
         }
 
