@@ -3,6 +3,7 @@ package com.github.stueberm1.riskmanager.core.test.application.risk;
 import com.github.stueberm1.riskmanager.core.application.risk.ModelAdaptingRiskServiceFacade;
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
+import com.github.stueberm1.riskmanager.core.application.risk.list.Risks;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
@@ -36,6 +37,9 @@ class RiskServiceTest {
     @Mock
     private RiskReader riskReader;
 
+    @Mock
+    private Risks risks;
+
     private ModelAdaptingRiskServiceFacade modelAdaptingRiskServiceFacade;
 
     public static final RiskIdentifier TEST_ID = SimpleNumericRiskIdentifier.builder().withCurrentNumber(1L).build();
@@ -51,6 +55,7 @@ class RiskServiceTest {
                 .riskFactory(riskFactory)
                 .createRisk(createRisk)
                 .riskReader(riskReader)
+                .risks(risks)
                 .build();
     }
 
