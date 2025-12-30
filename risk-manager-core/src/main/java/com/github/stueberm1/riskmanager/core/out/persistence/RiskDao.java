@@ -56,11 +56,11 @@ public abstract class RiskDao {
     }
 
     public Optional<String> contingencyPlanning() {
-        return Optional.of(contingencyPlanning);
+        return Optional.ofNullable(contingencyPlanning);
     }
 
     public Optional<String> getMitigationStrategy() {
-        return Optional.of(mitigationStrategy);
+        return Optional.ofNullable(mitigationStrategy);
     }
 
     /// The abstract constructor takes a realization of the abstract {@link Builder} as argument to create a consistent

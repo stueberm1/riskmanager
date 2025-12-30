@@ -102,6 +102,8 @@ public abstract class RiskIdentifier implements Comparable<RiskIdentifier> {
         /**
          *
          * @return
+         * @throws com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException
+         *      If the `RiskIdentifier` does not meet the requirements.
          */
         public abstract RiskIdentifier build();
     }
