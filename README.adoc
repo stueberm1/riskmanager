@@ -21,6 +21,7 @@ The following documents are currently available:
 
 . link:https://github.com/users/stueberm1/projects/1/views/3[Backlog]
 . link:https://github.com/users/stueberm1/projects/1/views/4[Roadmap]
+. link:https://github.com/stueberm1/riskmanager/discussions[discussions and feature requests]
 . xref:documentation/arc-documentation/risk-manager-architecture-description.adoc[Architecture description]
 
 == Installation
