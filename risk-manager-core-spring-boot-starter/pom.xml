@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>risk-manager-core-spring-boot-starter</artifactId>
+    <description>Spring-Boot-Starter of the core component</description>
 
     <dependencies>
         <dependency>

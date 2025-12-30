@@ -22,7 +22,7 @@ public class ReadRiskDelegator implements RiskReader {
     @Override
     public Risk read(final RiskIdentifier id) {
         Optional<Risk> risk = riskFinder.find(id);
-        if (!risk.isEmpty()) {
+        if (risk.isPresent()) {
             return  risk.get();
         }
         throw new RiskNotFoundException("Not found", id);

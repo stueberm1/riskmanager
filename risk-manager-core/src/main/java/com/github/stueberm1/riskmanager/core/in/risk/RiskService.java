@@ -7,8 +7,7 @@ import java.util.List;
 public interface RiskService {
 
     ///
-    /// @throws com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException
-    ///         If the `RiskIdentifier` does not meet the requirements.
+    ///
     /// @throws RiskIdentifierAlreadyInUseException
     ///         if the client tries to define a risk with a blocked id
     /// @throws com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException

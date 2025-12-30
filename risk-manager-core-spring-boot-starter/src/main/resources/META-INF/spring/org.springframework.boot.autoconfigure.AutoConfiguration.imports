@@ -1,0 +1,6 @@
+com.github.stueberm1.riskmanager.config.core.domain.RiskFactoryAutoConfiguration
+com.github.stueberm1.riskmanager.config.core.application.create.CreateRiskAutoConfiguration
+com.github.stueberm1.riskmanager.config.core.application.find.RiskFinderAutoConfiguration
+com.github.stueberm1.riskmanager.config.core.application.find.RiskReaderAutoConfiguration
+com.github.stueberm1.riskmanager.config.core.application.list.RisksAutoConfiguration
+com.github.stueberm1.riskmanager.config.core.application.RiskServiceAutoConfiguration
