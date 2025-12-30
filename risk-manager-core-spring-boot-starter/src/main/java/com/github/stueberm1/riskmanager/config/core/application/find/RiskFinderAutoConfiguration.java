@@ -1,14 +1,16 @@
 package com.github.stueberm1.riskmanager.config.core.application.find;
 
+import com.github.stueberm1.riskmanager.config.core.domain.RiskFactoryAutoConfiguration;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskFinder;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskFinderAdapter;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@AutoConfiguration(before = RiskReaderAutoConfiguration.class, after = RiskFactoryAutoConfiguration.class)
 @ConditionalOnMissingBean(RiskFinder.class)
 public class RiskFinderAutoConfiguration {
 
