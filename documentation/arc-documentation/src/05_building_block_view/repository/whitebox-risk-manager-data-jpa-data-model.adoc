@@ -1,6 +1,10 @@
 ifndef::imagesdir[:imagesdir: ../../../images]
-=== White box risk-manager-data-jpa.data-model
+==== White box risk-manager-data-jpa.data-model
 .Building blocks of the risk-manager jpa-data-model
 image::05_building_block_view/repository/whitebox-risk-manager-data-jpa-data-model.drawio.png[risk data model]
 
 Motivation::
+A single Risk is a pretty simple object, so it can be saved in a single table.
+The model is extensible, if future requirements need some more complexity (e.g. project-context or labels or tags).
+
+The `RiskIdentifier` is a technology-agnostic functional identifier working with more than relational databases only, so it is also used as the primary key of the table as required by JPA.

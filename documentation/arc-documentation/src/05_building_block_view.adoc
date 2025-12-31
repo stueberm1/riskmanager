@@ -19,8 +19,6 @@ include::05_building_block_view/core-system/whitebox-risk-manager-core.adoc[]
 // white box data repository
 include::05_building_block_view/repository/whitebox-risk-manager-data-jpa.adoc[]
 
-
-
 === Level 3
 
 <<<
