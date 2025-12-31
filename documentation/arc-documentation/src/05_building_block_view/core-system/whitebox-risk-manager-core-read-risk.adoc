@@ -1,5 +1,5 @@
 ifndef::imagesdir[:imagesdir: ../../../images]
-=== White box risk-manager-core.find-risk
+==== White box risk-manager-core.find-risk
 
 .White box view of the find-risk building block
 image::05_building_block_view/coresystem/whiteboardrisk-manager-core-read-risk.drawing.png[find-risk]

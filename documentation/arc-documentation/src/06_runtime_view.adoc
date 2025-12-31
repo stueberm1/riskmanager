@@ -2,7 +2,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-runtime-view]]
 == Runtime View
-
+<<<
+// create risk
+include::06_runtime_view/runtime-description-create-risk.adoc[]
 
 
 

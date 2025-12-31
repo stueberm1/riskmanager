@@ -4,3 +4,11 @@ ifndef::imagesdir[:imagesdir: ../../../images]
 image::05_building_block_view/repository/whitebox-risk-manager-data-jpa.drawio.png[repository view]
 
 Motivation::
+
+The `risk-manager-data-jpa` is the adapter between the core-application and a
+relational database management system.
+Using the Java Persistence Api (JPA) introduce a further layer of abstraction to the system making it easier to support several relational database management systems without modification of the persistence block.
+
+Since the risk-manager-core provides a spring-boot-starter, building this building block as another spring-boot-starter makes the integration easy, without adding unwanted dependencies.
+
+The system uses a spring-boot jpa repository to provide database operations. The repository also implements springs link:https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/JpaSpecificationExecutor.html[JpaSpecificationExecutor], which allows to use criteria queries with this repository, so dynamic queries gets easy.
