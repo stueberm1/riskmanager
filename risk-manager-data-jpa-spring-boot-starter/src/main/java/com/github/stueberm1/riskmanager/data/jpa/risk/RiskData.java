@@ -13,9 +13,6 @@ import jakarta.validation.constraints.NotNull;;
 public class RiskData {
 
 
-
-    private Long id;
-
     private String riskIdentifier;
 
     private Severity severity;
@@ -30,17 +27,7 @@ public class RiskData {
 
     private String mitigationStrategy;
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @NotNull
     @NotBlank
     @Column(name = "risk_id", unique = true, nullable = false, updatable = false)

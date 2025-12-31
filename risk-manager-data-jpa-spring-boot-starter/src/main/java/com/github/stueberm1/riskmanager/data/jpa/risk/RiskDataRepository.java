@@ -7,11 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RiskDataRepository extends JpaRepository<RiskData, Long>,
+public interface RiskDataRepository extends JpaRepository<RiskData, String>,
         JpaSpecificationExecutor<RiskData> {
 
-    Optional<RiskData> findByRiskIdentifier(String riskIdentifier);
-
-    void deleteByRiskIdentifier(String riskIdentifier);
 
 }

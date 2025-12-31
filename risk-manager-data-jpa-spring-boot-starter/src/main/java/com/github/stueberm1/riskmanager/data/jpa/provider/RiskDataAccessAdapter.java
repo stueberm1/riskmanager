@@ -26,12 +26,12 @@ public class RiskDataAccessAdapter implements RiskDataAccessService {
 
     @Override
     public void delete(RiskIdentifier id) {
-        riskDataRepository.deleteByRiskIdentifier(id.id());
+        riskDataRepository.deleteById(id.id());
     }
 
     @Override
     public Optional<RiskDao> find(RiskIdentifier id) {
-        return riskDataRepository.findByRiskIdentifier(id.id()).map(riskDataRiskDataConverter::convert);
+        return riskDataRepository.findById(id.id()).map(riskDataRiskDataConverter::convert);
     }
 
     @Override
