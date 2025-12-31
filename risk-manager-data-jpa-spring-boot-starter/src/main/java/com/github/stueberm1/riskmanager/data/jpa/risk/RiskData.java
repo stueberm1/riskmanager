@@ -1,7 +1,6 @@
 package com.github.stueberm1.riskmanager.data.jpa.risk;
 
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
-import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

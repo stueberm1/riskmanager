@@ -2,7 +2,6 @@ package com.github.stueberm1.riskmanager.data.jpa.provider;
 
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
-import com.github.stueberm1.riskmanager.data.jpa.risk.RiskData;
 import com.github.stueberm1.riskmanager.data.jpa.risk.RiskDataRepository;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 
