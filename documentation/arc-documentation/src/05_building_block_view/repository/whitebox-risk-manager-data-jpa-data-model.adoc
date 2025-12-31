@@ -1,0 +1,6 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+=== White box risk-manager-data-jpa.data-model
+.Building blocks of the risk-manager jpa-data-model
+image::05_building_block_view/repository/whitebox-risk-manager-data-jpa-data-model.drawio.png[risk data model]
+
+Motivation::

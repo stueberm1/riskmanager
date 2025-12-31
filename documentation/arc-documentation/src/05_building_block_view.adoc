@@ -15,11 +15,18 @@ include::05_building_block_view/system-view/whitebox-system-view.adoc[]
 // whitebox-riskmanager-core
 include::05_building_block_view/core-system/whitebox-risk-manager-core.adoc[]
 
+<<<
+// white box data repository
+include::05_building_block_view/repository/whitebox-risk-manager-data-jpa.adoc[]
+
 
 
 === Level 3
 
 <<<
 // whitebox-riskmanager-core-find-risk
-include::05_building_block_view/core-system/whitebox-list-manager-core-read-risk.adoc[]
+include::05_building_block_view/core-system/whitebox-risk-manager-core-read-risk.adoc[]
 
+<<<
+// whitebox data-model
+include::05_building_block_view/repository/whitebox-risk-manager-data-jpa-data-model.adoc[]
