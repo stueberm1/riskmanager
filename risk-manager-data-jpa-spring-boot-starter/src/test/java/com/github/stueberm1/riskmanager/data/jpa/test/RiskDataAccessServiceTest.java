@@ -63,7 +63,7 @@ class RiskDataAccessServiceTest {
             riskDataAccessService.save(input);
 
             //then
-            assertThat(riskDataRepository.findByRiskIdentifier(TEST_ID.id())).isPresent()
+            assertThat(riskDataRepository.findById(TEST_ID.id())).isPresent()
                     .get()
                     .hasFieldOrPropertyWithValue("riskIdentifier", TEST_ID.id())
                     .hasFieldOrPropertyWithValue("severity", Severity.MEDIUM)
@@ -119,6 +119,28 @@ class RiskDataAccessServiceTest {
         riskData.setDetails(DETAILS);
         riskData.setContingencyPlanning(CONTINGENCY_PLANNING);
         return riskData;
+    }
+
+    @Nested
+    class DeleteRiskData {
+
+        @BeforeEach
+        void setUp() {
+            riskDataRepository.save(riskData(TEST_ID.id()));
+        }
+
+        @Test
+        void deleteRiskData() {
+            assertThat(riskDataRepository.findById(TEST_ID.id())).isPresent();
+
+            //when
+            riskDataAccessService.delete(TEST_ID);
+
+            //then
+            assertThat(riskDataRepository.findById(TEST_ID.id())).isNotPresent();
+        }
+
+
     }
 
     @Nested
