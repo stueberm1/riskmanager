@@ -1,25 +1,33 @@
 package com.github.stueberm1.riskmanager.http.model;
 
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
-import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.hateoas.RepresentationModel;
 
 public class RiskJson extends RepresentationModel<RiskJson> {
 
-    private RiskIdentifier id;
+    @NotNull
+    private Long id;
+    @NotNull
     private Severity severity;
+    @NotNull
     private ProbabilityOfOccurrence probabilityOfOccurrence;
+    @NotNull
+    @NotBlank
+    @Size(min = 10, max = 50)
     private String description;
     private String details;
     private String contingencyPlanning;
     private String mitigationStrategy;
 
-    public RiskIdentifier getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(RiskIdentifier id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

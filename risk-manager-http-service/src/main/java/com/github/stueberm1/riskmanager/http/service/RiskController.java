@@ -1,8 +1,13 @@
 package com.github.stueberm1.riskmanager.http.service;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+import com.github.stueberm1.riskmanager.types.risk.SimpleNumericRiskIdentifier;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
@@ -11,11 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
-@RestController("/risk")
+@RestController
+@RequestMapping("/api/v1/risk")
 public class RiskController {
 
 
-    private final  RiskService riskService;
+    private final RiskService riskService;
 
     private final RiskModelConverter converter;
 
@@ -24,11 +30,12 @@ public class RiskController {
         this.converter = converter;
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<RiskJson> createRisk(@RequestBody  RiskJson riskJson) {
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<RiskJson> createRisk(@Valid @RequestBody RiskJson riskJson) {
         riskService.createRisk(converter.convertToRiskModel(riskJson));
 
-        riskJson.add(Link.of("/{riskIdentifier}").withSelfRel().expand(riskJson.getId()));
+        Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskJson.getId())).withSelfRel();
+        riskJson.add(selfLink);
         return ResponseEntity.ok().body(riskJson);
     }
 
@@ -41,16 +48,21 @@ public class RiskController {
     }
 
     @PutMapping(value = "/{riskIdentifier}", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<RiskJson> createRisk(@PathVariable("riskIdentifier") RiskIdentifier riskIdentifier,
-                                               @RequestBody  RiskJson riskJson) {
-        riskService.createRisk(converter.convertToRiskModel(riskJson));
+    public ResponseEntity<RiskJson> createRisk(@PathVariable("riskIdentifier") Long riskIdentifier,
+                                               @Valid @RequestBody RiskJson riskJson) {
+        if (!riskIdentifier.equals(riskJson.getId())) {
+            throw new RiskIdentifierMisMatchException(riskIdentifier, riskJson.getId());
+        }
 
-        riskJson.add(Link.of("/{riskIdentifier}").withSelfRel().expand(riskJson.getId()));
+        riskService.createRisk(converter.convertToRiskModel(riskJson));
+        Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskIdentifier)).withSelfRel();
+        riskJson.add(selfLink);
         return ResponseEntity.ok().body(riskJson);
     }
 
     @GetMapping(value = "/{riskIdentifier}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<RiskJson> getRisk(@PathVariable("riskIdentifier") RiskIdentifier riskIdentifier) {
-        return ResponseEntity.ok().body(converter.convertToHttpModel(riskService.get(riskIdentifier)));
+    public ResponseEntity<RiskJson> getRisk(@PathVariable("riskIdentifier") Long riskIdentifier) {
+        RiskIdentifier id = SimpleNumericRiskIdentifier.builder().withCurrentNumber(riskIdentifier).build();
+        return ResponseEntity.ok().body(converter.convertToHttpModel(riskService.get(id)));
     }
 }

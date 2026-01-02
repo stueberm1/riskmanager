@@ -7,9 +7,15 @@ import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalIdNumberException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException;
+import jakarta.validation.ConstraintViolation;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.InvalidUrlException;
@@ -20,12 +26,12 @@ import java.net.URI;
 @RestControllerAdvice
 public class RiskControllerExceptionHandler {
 
-    @ExceptionHandler(IllegalIdNumberException.class)
+    @ExceptionHandler(value = IllegalIdNumberException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     public ResponseEntity<ProblemDetails> handleIllegalIdNumberException(IllegalIdNumberException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
     }
 
-    private static ProblemDetails convertTo(IllegalIdNumberException ex)  {
+    private static ProblemDetails convertTo(IllegalIdNumberException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setType(problemTypeFactory("invalid-id-number"));
         problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -36,7 +42,6 @@ public class RiskControllerExceptionHandler {
         return problemDetails;
     }
 
-
     private static URI problemTypeFactory(String typeIdentifier) {
         try {
             return UriComponentsBuilder.fromUriString(typeIdentifier).build().toUri();
@@ -45,12 +50,29 @@ public class RiskControllerExceptionHandler {
         }
     }
 
-    @ExceptionHandler(IllegalRiskIdentifierException.class)
+    @ExceptionHandler(value = RiskIdentifierMisMatchException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleRiskIdentifierMisMatchException(RiskIdentifierMisMatchException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(RiskIdentifierMisMatchException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("identifier-mismatch"));
+        problemDetails.setStatus(HttpStatus.UNPROCESSABLE_CONTENT.value());
+        problemDetails.setTitle("Object id do not match the request path");
+        problemDetails.setDetail(String.format("Object path requires payload with id %s, but was %s", ex.getPathId(),
+                ex.getObjectId()));
+        URI uri = WebMvcLinkBuilder.linkTo(RiskController.class).slash(ex.getPathId()).toUri();
+        problemDetails.setInstance(uri.toString());
+        return problemDetails;
+    }
+
+    @ExceptionHandler(value = IllegalRiskIdentifierException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     public ResponseEntity<ProblemDetails> handleIllegalRiskIdentifierException(IllegalRiskIdentifierException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
     }
 
-    private static ProblemDetails convertTo(IllegalRiskIdentifierException ex)  {
+    private static ProblemDetails convertTo(IllegalRiskIdentifierException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setType(problemTypeFactory("invalid-identifier"));
         problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -59,12 +81,12 @@ public class RiskControllerExceptionHandler {
         return problemDetails;
     }
 
-    @ExceptionHandler(EntityConstraintViolationException.class)
+    @ExceptionHandler(value = EntityConstraintViolationException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     public ResponseEntity<ProblemDetails> handleEntityConstraintViolationException(EntityConstraintViolationException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(convertTo(ex));
     }
 
-    private static ProblemDetails convertTo(EntityConstraintViolationException ex)  {
+    private static ProblemDetails convertTo(EntityConstraintViolationException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setType(problemTypeFactory("invalid-risk-arguments"));
         problemDetails.setStatus(HttpStatus.UNPROCESSABLE_CONTENT.value());
@@ -78,12 +100,30 @@ public class RiskControllerExceptionHandler {
         return new ErrorDetail(violation.violation(), violation.path());
     }
 
-    @ExceptionHandler(RiskIdentifierAlreadyInUseException.class)
+    @ExceptionHandler(value = MethodArgumentNotValidException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleConstraintViolationException(MethodArgumentNotValidException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(MethodArgumentNotValidException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("invalid-risk-arguments"));
+        problemDetails.setStatus(HttpStatus.UNPROCESSABLE_CONTENT.value());
+        problemDetails.setTitle(ex.getMessage());
+        BindingResult bindingResult = ex.getBindingResult();
+        return problemDetails;
+    }
+
+    private static ErrorDetail convertTo(ConstraintViolation<?> violation) {
+        return new ErrorDetail(violation.getMessage(), violation.getPropertyPath().toString());
+    }
+
+    @ExceptionHandler(value = RiskIdentifierAlreadyInUseException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     public ResponseEntity<ProblemDetails> handleRiskIdentifierAlreadyInUseException(RiskIdentifierAlreadyInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(convertTo(ex));
     }
 
-    private static ProblemDetails convertTo(RiskIdentifierAlreadyInUseException ex)  {
+    private static ProblemDetails convertTo(RiskIdentifierAlreadyInUseException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setType(problemTypeFactory("duplicate-identifier"));
         problemDetails.setStatus(HttpStatus.CONFLICT.value());
@@ -94,12 +134,12 @@ public class RiskControllerExceptionHandler {
         return problemDetails;
     }
 
-    @ExceptionHandler(RiskNotFoundException.class)
+    @ExceptionHandler(value = RiskNotFoundException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     public ResponseEntity<ProblemDetails> handleRiskNotFoundException(RiskNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(convertTo(ex));
     }
 
-    private static ProblemDetails convertTo(RiskNotFoundException ex)  {
+    private static ProblemDetails convertTo(RiskNotFoundException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
         problemDetails.setType(problemTypeFactory("risk-not-found"));
         problemDetails.setStatus(HttpStatus.NOT_FOUND.value());

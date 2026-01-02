@@ -1,11 +1,15 @@
 package com.github.stueberm1.riskmanager.http.model;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({"detail", "pointer"})
 public class ErrorDetail {
 
     private String detail;
     private String pointer;
 
-    public ErrorDetail() {}
+    public ErrorDetail() {
+    }
 
     public ErrorDetail(String detail, String pointer) {
         this.detail = detail;
