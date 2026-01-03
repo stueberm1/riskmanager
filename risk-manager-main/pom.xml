@@ -14,7 +14,17 @@
     <dependencies>
         <dependency>
             <groupId>com.github.stueberm1.riskmanager</groupId>
-            <artifactId>risk-manager-core</artifactId>
+            <artifactId>risk-manager-core-spring-boot-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stueberm1.riskmanager</groupId>
+            <artifactId>risk-manager-data-jpa-spring-boot-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stueberm1.riskmanager</groupId>
+            <artifactId>risk-manager-http-service</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
