@@ -43,6 +43,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 
 @WebMvcTest(controllers = {RiskController.class, RiskControllerExceptionHandler.class})
 @ExtendWith(RestDocumentationExtension.class)
@@ -187,7 +189,7 @@ class RestControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                     .andExpect(jsonPath("$.id").value(TEST_ID.id()))
                     .andExpect(jsonPath("$._links.self.href").value("http://localhost:8080/api/v1/risk/1"))
-                    .andDo(document("post-risk"));
+                    .andDo(document("post-risk", pathParameters(parameterWithName("riskIdentifier").description("Unique identifier of a risk"))));
 
             then(riskService).should(times(1)).createRisk(new RiskTO(SimpleNumericRiskIdentifier.builder()
                     .withCurrentNumber(1)
@@ -282,7 +284,8 @@ class RestControllerTest {
                     .andExpect(jsonPath("$._links.self.href").value("http://localhost:8080/api/v1/risk/1"))
                     .andDo(document("get-risk", links(
                         linkWithRel("self").optional().ignored()
-                    ),responseFields(
+                    ),pathParameters(parameterWithName("riskIdentifier").description("Unique identifier of a risk"))
+                            ,responseFields(
                             fieldWithPath("id").description("The risk identifier."),
                             fieldWithPath("severity").description("Estimation of the harm the project earn if the risk becomes a problem"),
                             fieldWithPath("probabilityOfOccurrence").description("Assessment of the probability that the risk will become a problem"),
