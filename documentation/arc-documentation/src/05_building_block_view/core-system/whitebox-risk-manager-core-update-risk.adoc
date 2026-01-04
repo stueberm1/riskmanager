@@ -1,0 +1,5 @@
+ifndef::imagesdir[:imagesdir: ../../../images]
+==== White box risk-manager-core.update-risk
+
+.White box view of the update-risk building block
+image::05_building_block_view/coresystem/whitebox-risk-manager-core-update.drawio.png[update-risk]
