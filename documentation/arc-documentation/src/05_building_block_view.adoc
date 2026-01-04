@@ -26,5 +26,9 @@ include::05_building_block_view/repository/whitebox-risk-manager-data-jpa.adoc[]
 include::05_building_block_view/core-system/whitebox-risk-manager-core-read-risk.adoc[]
 
 <<<
-// whitebox data-model
+// whitebox-risk-manager-core.update-risk
+include::05_building_block_view/core-system/whitebox-risk-manager-core-update-risk.adoc[]
+
+<<<
+// whitebox data repository.data-model
 include::05_building_block_view/repository/whitebox-risk-manager-data-jpa-data-model.adoc[]
