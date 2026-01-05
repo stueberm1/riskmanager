@@ -1,5 +1,8 @@
 package com.github.stueberm1.riskmanager.config.core.application.create;
 
+import com.github.stueberm1.riskmanager.config.core.application.RiskServiceAutoConfiguration;
+import com.github.stueberm1.riskmanager.config.core.application.find.RiskFinderAutoConfiguration;
+import com.github.stueberm1.riskmanager.config.core.application.find.RiskReaderAutoConfiguration;
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRiskPersistenceAdapter;
 import com.github.stueberm1.riskmanager.core.application.risk.create.IdValidatingCreateRisk;
@@ -10,7 +13,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-@AutoConfiguration(after = RiskFinder.class, before = RiskReader.class)
+@AutoConfiguration(after = RiskFinderAutoConfiguration.class, before = {RiskServiceAutoConfiguration.class, RiskReaderAutoConfiguration.class})
 @ConditionalOnMissingBean(CreateRisk.class)
 public class CreateRiskAutoConfiguration {
 

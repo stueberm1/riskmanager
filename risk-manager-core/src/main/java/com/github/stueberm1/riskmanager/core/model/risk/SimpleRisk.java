@@ -9,6 +9,11 @@ public class SimpleRisk extends Risk {
 
     }
 
+    @Override
+    protected Risk.Builder<?> newBuilder(RiskPatch riskPatch) {
+        return SimpleRisk.builder();
+    }
+
     public SimpleRisk(Builder builder) {
         super(builder);
     }

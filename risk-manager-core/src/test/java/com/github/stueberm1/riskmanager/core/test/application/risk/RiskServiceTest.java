@@ -4,7 +4,10 @@ import com.github.stueberm1.riskmanager.core.application.risk.ModelAdaptingRiskS
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
 import com.github.stueberm1.riskmanager.core.application.risk.list.Risks;
+import com.github.stueberm1.riskmanager.core.application.risk.update.PatchRisk;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
+import com.github.stueberm1.riskmanager.core.domain.RiskPatchFactory;
+import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
@@ -32,10 +35,19 @@ class RiskServiceTest {
     private RiskFactory riskFactory;
 
     @Mock
+    private RiskPatchFactory riskPatchFactory;
+
+    @Mock
     private CreateRisk createRisk;
 
     @Mock
     private RiskReader riskReader;
+
+    @Mock
+    private PatchRisk patchRisk;
+
+    @Mock
+    private PatchRisk.PatchSpecification patchSpecification;
 
     @Mock
     private Risks risks;
@@ -56,6 +68,8 @@ class RiskServiceTest {
                 .createRisk(createRisk)
                 .riskReader(riskReader)
                 .risks(risks)
+                .patchRisk(patchRisk)
+                .riskPatchFactory(riskPatchFactory)
                 .build();
     }
 
@@ -133,5 +147,41 @@ class RiskServiceTest {
         return new RiskTO(risk.id(), risk.severity(), risk.probabilityOfOccurrence(), risk.description().value(),
                 risk.details().detailContent(), risk.contingencyPlanning().map(ContingencyPlanning::plan).orElse(null),
                 risk.getMitigationStrategy().map(MitigationStrategy::strategy).orElse(null));
+    }
+
+    @Nested
+    class UpdateRisk {
+
+        private final static RiskPatchTO PATCH_TO = new RiskPatchTO(TEST_ID, null, null,
+                null, CONTINGENCY_PLANNING, MITIGATION_STRATEGY);
+
+        private final static RiskPatch PATCH = SimplePatch.builder()
+                .contingencyPlanning(SimpleContingencyPlanningDescription.ofValue(CONTINGENCY_PLANNING))
+                .mitigationStrategy(SimpleMitigationStrategyDescription.ofValue(MITIGATION_STRATEGY))
+                .build();
+
+        @BeforeEach
+        void setUp() {
+            given(riskPatchFactory.create(any())).willReturn(PATCH);
+            given(patchRisk.patchRiskIdentifiedBy(any())).willReturn(patchSpecification);
+            given(patchSpecification.with(any())).willReturn(TEST_RISK);
+        }
+
+        @Test
+        void argumentGetConvertedToDomainModelPatchUsingConverter() {
+            // when;
+            modelAdaptingRiskServiceFacade.updateRisk(PATCH_TO);
+
+            then(riskPatchFactory).should(times(1)).create(PATCH_TO);
+        }
+
+        @Test
+        void servicePatchesTheRisk() {
+            // when;
+            modelAdaptingRiskServiceFacade.updateRisk(PATCH_TO);
+
+            then(patchRisk).should(times(1)).patchRiskIdentifiedBy(TEST_ID);
+            then(patchSpecification).should(times(1)).with(PATCH);
+        }
     }
 }

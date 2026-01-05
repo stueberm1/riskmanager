@@ -24,7 +24,7 @@ import static org.assertj.core.api.InstanceOfAssertFactories.list;
 
 class RiskFactoryTest {
 
-    public static final RiskIdentifier TEST_ID = SimpleNumericRiskIdentifier.builder().withCurrentNumber(1L).build();
+    private static final RiskIdentifier TEST_ID = SimpleNumericRiskIdentifier.builder().withCurrentNumber(1L).build();
 
     private final RiskFactory riskFactory = new SimpleRiskFactory();
 

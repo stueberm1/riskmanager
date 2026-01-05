@@ -1,5 +1,6 @@
 package com.github.stueberm1.riskmanager.core.in.risk;
 
+import com.github.stueberm1.riskmanager.core.model.risk.RiskPatch;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface RiskService {
     /// @throws RiskNotFoundException if there is no risk persisted having the requested {@link RiskIdentifier}
     RiskTO get(RiskIdentifier id);
     List<RiskTO> listAll();
+
+    RiskTO updateRisk(RiskPatchTO riskPatch);
 }
