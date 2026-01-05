@@ -21,6 +21,11 @@ public class SortableRisk extends Risk implements Comparable<SortableRisk> {
 
     }
 
+    @Override
+    protected <T extends RiskPatch> Risk.Builder<?> newBuilder(T riskPatch) {
+        return SortableRisk.builder().position(position);
+    }
+
     public long position() {
         return position;
     }

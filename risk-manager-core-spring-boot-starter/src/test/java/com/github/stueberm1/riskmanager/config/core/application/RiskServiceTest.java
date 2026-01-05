@@ -13,11 +13,10 @@ import com.github.stueberm1.riskmanager.config.core.application.create.CreateRis
 import com.github.stueberm1.riskmanager.config.core.application.find.RiskFinderAutoConfiguration;
 import com.github.stueberm1.riskmanager.config.core.application.find.RiskReaderAutoConfiguration;
 import com.github.stueberm1.riskmanager.config.core.application.list.RisksAutoConfiguration;
+import com.github.stueberm1.riskmanager.config.core.application.update.UpdateRiskAutoConfiguration;
 import com.github.stueberm1.riskmanager.config.core.domain.RiskFactoryAutoConfiguration;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskNotFoundException;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
+import com.github.stueberm1.riskmanager.config.core.domain.RiskPatchFactoryAutoConfiguration;
+import com.github.stueberm1.riskmanager.core.in.risk.*;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
 import com.github.stueberm1.riskmanager.core.out.persistence.SimpleRiskDao;
@@ -28,7 +27,10 @@ import com.github.stueberm1.riskmanager.types.risk.SimpleNumericRiskIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -39,9 +41,9 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 @SpringBootTest
-@ContextConfiguration(classes = {RiskFactoryAutoConfiguration.class, CreateRiskAutoConfiguration.class,
-        RiskFinderAutoConfiguration.class, RiskReaderAutoConfiguration.class, RisksAutoConfiguration.class,
-RiskServiceAutoConfiguration.class})
+@ContextConfiguration(classes = {RiskFactoryAutoConfiguration.class, RiskPatchFactoryAutoConfiguration.class,
+        CreateRiskAutoConfiguration.class, UpdateRiskAutoConfiguration.class, RiskFinderAutoConfiguration.class,
+        RiskReaderAutoConfiguration.class, RisksAutoConfiguration.class, RiskServiceAutoConfiguration.class})
 class RiskServiceTest {
 
     @MockitoBean
@@ -56,6 +58,9 @@ class RiskServiceTest {
     public static final String CONTINGENCY_PLANNING = "Crying and panic";
     public static final String MITIGATION_STRATEGY =
             "We need to define limits and monitor the metrics, so that we can intervene at time";
+
+    @Captor
+    private ArgumentCaptor<RiskDao> riskDaoCaptor;
 
 
     @Nested
@@ -106,6 +111,7 @@ class RiskServiceTest {
                     .isEqualTo(TEST_ID);
         }
     }
+
 
     @Nested
     class FindRisk {
@@ -180,5 +186,76 @@ class RiskServiceTest {
                 .havingDescription(DESCRIPTION)
                 .withDetailedInformation(DETAILS)
                 .build();
+    }
+
+    @Nested
+    class UpdateRisk {
+
+        @Test
+        void RiskNotFoundExceptionIsThrownWhenRiskIsNotFound() {
+            given(riskDataAccessService.find(any())).willReturn(Optional.empty());
+
+            RiskPatchTO patch = new RiskPatchTO(TEST_ID, Severity.VERY_HIGH,null, null,
+                    CONTINGENCY_PLANNING, null);
+
+            // when
+            assertThatExceptionOfType(RiskNotFoundException.class).isThrownBy(() -> riskService.updateRisk(patch))
+                    .extracting(RiskNotFoundException::getRiskIdentifier)
+                    .isNotNull()
+                    .isEqualTo(TEST_ID);
+
+            then(riskDataAccessService).should(times(1)).find(TEST_ID);
+            then(riskDataAccessService).shouldHaveNoMoreInteractions();
+
+        }
+
+        @Test
+        void updateSeverityAndContingencyPlanningOfTheRisk() {
+
+            RiskDao existingRiskDao = SimpleRiskDao.builder()
+                    .hasId(TEST_ID)
+                    .withSeverity(Severity.MEDIUM)
+                    .probabilityOfOccurrence(ProbabilityOfOccurrence.LOW)
+                    .havingDescription(DESCRIPTION)
+                    .withDetailedInformation(DETAILS)
+                    .build();
+            given(riskDataAccessService.find(any())).willReturn(Optional.of(existingRiskDao));
+
+            // when
+            RiskPatchTO patch = new RiskPatchTO(TEST_ID, Severity.VERY_HIGH,null, null,
+                    CONTINGENCY_PLANNING, null);
+            riskService.updateRisk(patch);
+
+            RiskDao expectedAfterAction = SimpleRiskDao.builder()
+                    .hasId(TEST_ID)
+                    .withSeverity(Severity.VERY_HIGH)
+                    .probabilityOfOccurrence(ProbabilityOfOccurrence.LOW)
+                    .havingDescription(DESCRIPTION)
+                    .withDetailedInformation(DETAILS)
+                    .contingencyPlanning(CONTINGENCY_PLANNING)
+                    .build();
+            then(riskDataAccessService).should(times(1)).save(expectedAfterAction);
+        }
+
+        @Test
+        void serviceReturnsTheUpdatedRisk() {
+            RiskDao existingRiskDao = SimpleRiskDao.builder()
+                    .hasId(TEST_ID)
+                    .withSeverity(Severity.MEDIUM)
+                    .probabilityOfOccurrence(ProbabilityOfOccurrence.LOW)
+                    .havingDescription(DESCRIPTION)
+                    .withDetailedInformation(DETAILS)
+                    .build();
+            given(riskDataAccessService.find(any())).willReturn(Optional.of(existingRiskDao));
+
+            // when
+            RiskPatchTO patch = new RiskPatchTO(TEST_ID, Severity.VERY_HIGH,null, null,
+                    CONTINGENCY_PLANNING, null);
+            RiskTO risk =riskService.updateRisk(patch);
+
+            RiskTO expected = new RiskTO(TEST_ID, Severity.VERY_HIGH, ProbabilityOfOccurrence.LOW, DESCRIPTION, DETAILS,
+                    CONTINGENCY_PLANNING, null);
+            assertThat(risk).isNotNull().isEqualTo(expected);
+        }
     }
 }

@@ -133,6 +133,33 @@ public abstract class Risk {
     /// gets violated
     protected abstract void validate() throws EntityConstraintViolationException;
 
+    public<T extends RiskPatch> Risk applyPatch(T riskPatch) {
+        requireNonNull(riskPatch, "riskPatch");
+        final Builder<?> builder = newBuilder(riskPatch)
+                .hasId(id())
+                .havingDescription(description());
+            riskPatch.getDetails().ifPresentOrElse(builder::withDetailedInformation,
+                    () -> builder.withDetailedInformation(details()));
+            riskPatch.getSeverity().ifPresentOrElse(builder::withSeverity, () -> builder.withSeverity(severity()));
+            riskPatch.getProbabilityOfOccurrence().ifPresentOrElse(builder::probabilityOfOccurrence,
+                    () -> builder.probabilityOfOccurrence(probabilityOfOccurrence()));
+            riskPatch.getContingencyPlanning().ifPresentOrElse(builder::contingencyPlanning,
+                    () -> {
+                        if (contingencyPlanning().isPresent()) {
+                            builder.contingencyPlanning(contingencyPlanning().get());
+                        }
+                    });
+            riskPatch.getMitigationStrategy().ifPresentOrElse(builder::mitigationStrategy,
+                    () -> {
+                        if (getMitigationStrategy().isPresent()) {
+                            builder.mitigationStrategy(getMitigationStrategy().get());
+                        }
+                    });
+            return builder.build();
+    }
+
+    protected abstract <T extends RiskPatch> Builder<?> newBuilder(T riskPatch);
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
