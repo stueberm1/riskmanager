@@ -3,11 +3,13 @@ package com.github.stueberm1.riskmanager.http.service;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskNotFoundException;
 import com.github.stueberm1.riskmanager.http.model.ErrorDetail;
+import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalIdNumberException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException;
 import jakarta.validation.ConstraintViolation;
+import org.springframework.boot.context.properties.bind.Nested;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -97,7 +99,7 @@ public class RiskControllerExceptionHandler {
     }
 
     private static ErrorDetail convertTo(EntityConstraintViolationException.EntityConstraintViolation violation) {
-        return new ErrorDetail(violation.violation(), violation.path());
+        return new ErrorDetail(violation.violation(), new JsonPointer(violation.path()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
@@ -111,11 +113,12 @@ public class RiskControllerExceptionHandler {
         problemDetails.setStatus(HttpStatus.UNPROCESSABLE_CONTENT.value());
         problemDetails.setTitle(ex.getMessage());
         BindingResult bindingResult = ex.getBindingResult();
+        problemDetails.setErrors(bindingResult.getFieldErrors().stream().map(RiskControllerExceptionHandler::convertTo).toArray(ErrorDetail[]::new));
         return problemDetails;
     }
 
-    private static ErrorDetail convertTo(ConstraintViolation<?> violation) {
-        return new ErrorDetail(violation.getMessage(), violation.getPropertyPath().toString());
+    private static ErrorDetail convertTo(FieldError violation) {
+        return new ErrorDetail(violation.getCode(), new JsonPointer("#/" + violation.getField()));
     }
 
     @ExceptionHandler(value = RiskIdentifierAlreadyInUseException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
@@ -149,4 +152,5 @@ public class RiskControllerExceptionHandler {
         problemDetails.setInstance(uri.toString());
         return problemDetails;
     }
+
 }

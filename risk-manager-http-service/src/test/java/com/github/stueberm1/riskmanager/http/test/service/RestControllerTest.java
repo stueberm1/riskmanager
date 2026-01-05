@@ -1,10 +1,11 @@
 package com.github.stueberm1.riskmanager.http.test.service;
 
-import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskNotFoundException;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
+import com.github.stueberm1.riskmanager.core.in.risk.*;
+import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
+import com.github.stueberm1.riskmanager.http.model.patch.AddOperation;
+import com.github.stueberm1.riskmanager.http.model.patch.JsonPatch;
+import com.github.stueberm1.riskmanager.http.model.patch.JsonPatchOperation;
 import com.github.stueberm1.riskmanager.http.service.RiskController;
 import com.github.stueberm1.riskmanager.http.service.RiskControllerExceptionHandler;
 import com.github.stueberm1.riskmanager.http.service.RiskManagerHttpConfiguration;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.LongStream;
@@ -230,7 +232,7 @@ class RestControllerTest {
 
             // when
             final String requestAsString = OBJECT_MAPPER.writeValueAsString(riskJson);
-            mockMvc.perform(put(RESOURCE_URI, TEST_ID.id()).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
+            mockMvc.perform(put(RESOURCE_URI, TEST_ID.id()).contentType(MediaType.APPLICATION_JSON).content(requestAsString).characterEncoding(StandardCharsets.UTF_8))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isUnprocessableContent())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
@@ -241,7 +243,7 @@ class RestControllerTest {
         @Test
         void internalValidationErrorProducesUnprocessableContentDetails() throws Exception {
             doThrow(new EntityConstraintViolationException(RiskTO.class, List.of(
-                    new EntityConstraintViolationException.EntityConstraintViolation("#/risk/description", "description too long"))))
+                    new EntityConstraintViolationException.EntityConstraintViolation("#/description", "description too long"))))
                     .when(riskService).createRisk(any());
 
             Map<String, Object> map = Map.of("id", TEST_ID.id(), "description", DESCRIPTION, "details", DETAILS,
@@ -256,7 +258,7 @@ class RestControllerTest {
                     .andExpect(jsonPath("$.title").value("Some arguments of the risk are invalid."))
                     .andExpect(jsonPath("$.errors.length()").value(1))
                     .andExpect(jsonPath("$.errors[0].detail").value("description too long"))
-                    .andExpect(jsonPath("$.errors[0].pointer").value("#/risk/description"))
+                    .andExpect(jsonPath("$.errors[0].pointer").value("#/description"))
                     .andDo(document("constraint-violation-problem"));
         }
     }
@@ -314,6 +316,46 @@ class RestControllerTest {
                     .andDo(document("get-risk-failed"));
         }
 
+    }
+
+    @Nested
+    class PatchRisk {
+
+        @Test
+        void addConsistencyPlanningToRisk() throws Exception {
+            given(riskService.updateRisk(any())).willReturn(new RiskTO(TEST_ID, Severity.MEDIUM, ProbabilityOfOccurrence.LOW,
+                    DESCRIPTION, DETAILS, CONTINGENCY_PLANNING, null));
+
+            JsonPatch jsonPatch = new JsonPatch(new JsonPatchOperation[]{new AddOperation(new JsonPointer("/contingencyPlanning"), CONTINGENCY_PLANNING)});
+            //when
+            final String requestAsString = OBJECT_MAPPER.writeValueAsString(jsonPatch);
+            mockMvc.perform(patch(RESOURCE_URI, 1L).contentType("application/json-patch+json")
+                            .content(requestAsString).characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
+
+            then(riskService).should(times(1)).updateRisk(new RiskPatchTO(TEST_ID, null,
+                    null, null, CONTINGENCY_PLANNING, null));
+        }
+
+        @Test
+        void replaceDetailsWithUpdate() throws Exception {
+            final String replacedDetails = "Very evil risk";
+            given(riskService.updateRisk(any())).willReturn(new RiskTO(TEST_ID, Severity.MEDIUM, ProbabilityOfOccurrence.LOW,
+                    DESCRIPTION, replacedDetails, CONTINGENCY_PLANNING, null));
+            JsonPatch jsonPatch = new JsonPatch(new JsonPatchOperation[]{new AddOperation(new JsonPointer("/details"), replacedDetails)});
+
+            //when
+            final String requestAsString = OBJECT_MAPPER.writeValueAsString(jsonPatch);
+            mockMvc.perform(patch(RESOURCE_URI, 1L).contentType("application/json-patch+json")
+                            .content(requestAsString).characterEncoding(StandardCharsets.UTF_8))
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
+            then(riskService).should(times(1)).updateRisk(new RiskPatchTO(TEST_ID, null,
+                    null, replacedDetails, null, null));
+        }
     }
 
 }

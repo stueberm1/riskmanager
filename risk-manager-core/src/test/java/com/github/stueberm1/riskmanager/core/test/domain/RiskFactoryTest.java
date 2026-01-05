@@ -66,7 +66,7 @@ class RiskFactoryTest {
                     .asInstanceOf(list(EntityConstraintViolationException.EntityConstraintViolation.class))
                     .isNotNull()
                     .size().isEqualTo(1).returnToIterable()
-                    .allMatch(violation -> "risk.description".equalsIgnoreCase(violation.path()))
+                    .allMatch(violation -> "#/description".equalsIgnoreCase(violation.path()))
                     .allMatch(violation -> "Description must have at least 10 characters length".equalsIgnoreCase(violation.violation()));
         }
 
@@ -84,7 +84,7 @@ class RiskFactoryTest {
                     .asInstanceOf(list(EntityConstraintViolationException.EntityConstraintViolation.class))
                     .isNotNull()
                     .size().isEqualTo(1).returnToIterable()
-                    .allMatch(violation -> "risk.description".equalsIgnoreCase(violation.path()))
+                    .allMatch(violation -> "#/description".equalsIgnoreCase(violation.path()))
                     .allMatch(violation -> "Description must have at most 50 characters length".equalsIgnoreCase(violation.violation()));
         }
     }
