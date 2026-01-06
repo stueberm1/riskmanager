@@ -19,4 +19,11 @@ Contained Building Blocks::
 _<Description of contained building block (black boxes)>_
 
 Important Interfaces::
-_<Description of important interfaces>_
+
+Core defines an incoming and an outgoing port to interact with it.
+
+.Incoming port risk
+image::05_building_block_view/coresystem/port-core-in-risk.drawio.png[in-risk]
+
+.Outgoing port persistence
+image::05_building_block_view/coresystem/port-core-out-persistence.drawio.png[out-persistence]

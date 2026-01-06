@@ -19,5 +19,5 @@ While the risk-manager-core is responsible to provide everything to fulfill the 
 
 
 .Visualization of the persistence provider interface
-image::05_building_block_view/coresystem/port-out-persistence.drawio.png[persistence outgoing/required port]
+image::05_building_block_view/coresystem/port-core-out-persistence.drawio.png[persistence outgoing/required port]
 
