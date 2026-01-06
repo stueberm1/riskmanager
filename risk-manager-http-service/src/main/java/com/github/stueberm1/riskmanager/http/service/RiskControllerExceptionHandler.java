@@ -1,20 +1,24 @@
 package com.github.stueberm1.riskmanager.http.service;
 
+import static java.lang.String.format;
+
 import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskNotFoundException;
 import com.github.stueberm1.riskmanager.http.model.ErrorDetail;
+import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
+import com.github.stueberm1.riskmanager.http.model.patch.IllegalValueModificationRequestException;
+import com.github.stueberm1.riskmanager.http.model.patch.InvalidJsonPointerException;
+import com.github.stueberm1.riskmanager.http.model.patch.UnsupportedJsonPatchOperationException;
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalIdNumberException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException;
-import jakarta.validation.ConstraintViolation;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -97,7 +101,7 @@ public class RiskControllerExceptionHandler {
     }
 
     private static ErrorDetail convertTo(EntityConstraintViolationException.EntityConstraintViolation violation) {
-        return new ErrorDetail(violation.violation(), violation.path());
+        return new ErrorDetail(violation.violation(), new JsonPointer(violation.path()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
@@ -111,11 +115,12 @@ public class RiskControllerExceptionHandler {
         problemDetails.setStatus(HttpStatus.UNPROCESSABLE_CONTENT.value());
         problemDetails.setTitle(ex.getMessage());
         BindingResult bindingResult = ex.getBindingResult();
+        problemDetails.setErrors(bindingResult.getFieldErrors().stream().map(RiskControllerExceptionHandler::convertTo).toArray(ErrorDetail[]::new));
         return problemDetails;
     }
 
-    private static ErrorDetail convertTo(ConstraintViolation<?> violation) {
-        return new ErrorDetail(violation.getMessage(), violation.getPropertyPath().toString());
+    private static ErrorDetail convertTo(FieldError violation) {
+        return new ErrorDetail(violation.getCode(), new JsonPointer("#/" + violation.getField()));
     }
 
     @ExceptionHandler(value = RiskIdentifierAlreadyInUseException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
@@ -149,4 +154,52 @@ public class RiskControllerExceptionHandler {
         problemDetails.setInstance(uri.toString());
         return problemDetails;
     }
+
+    @ExceptionHandler(value = InvalidJsonPointerException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleInvalidJsonPointerException(InvalidJsonPointerException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(InvalidJsonPointerException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("invalid-json-pointer"));
+        problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        problemDetails.setTitle("Invalid JSON Pointer");
+        problemDetails.setDetail(format("The JSON Pointer %s points to a non-existing property.",
+                ex.getJsonPointer().getRawPath()));
+        URI uri = WebMvcLinkBuilder.linkTo(RiskController.class).slash(ex.getRiskIdentifier().id()).toUri();
+        problemDetails.setInstance(uri.toString());
+        return problemDetails;
+    }
+
+    @ExceptionHandler(value = UnsupportedJsonPatchOperationException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleUnsupportedJsonPatchOperationException(UnsupportedJsonPatchOperationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(UnsupportedJsonPatchOperationException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("invalid-json-patch-operation"));
+        problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        problemDetails.setTitle("Invalid JSON Patch Operation");
+        problemDetails.setDetail(format("Json-Patch %s is not supported. Reason: %s", ex.getOperationName(), ex.getMessage()));
+        return  problemDetails;
+    }
+
+    @ExceptionHandler(value = IllegalValueModificationRequestException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleIllegalValueModificationRequestException(IllegalValueModificationRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(IllegalValueModificationRequestException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("illegal-value-modification"));
+        problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        problemDetails.setTitle("Illegal value modification");
+        URI uri = WebMvcLinkBuilder.linkTo(RiskController.class).slash(ex.getRiskIdentifier().id()).toUri();
+        problemDetails.setInstance(uri.toString());
+        problemDetails.setErrors(new ErrorDetail[] {new ErrorDetail(ex.getMessage(), ex.getPath())});
+        return problemDetails;
+    }
+
 }

@@ -3,8 +3,10 @@ package com.github.stueberm1.riskmanager.http.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
+import com.github.stueberm1.riskmanager.http.model.patch.JsonPatch;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.SimpleNumericRiskIdentifier;
 import jakarta.validation.Valid;
@@ -23,16 +25,19 @@ public class RiskController {
 
     private final RiskService riskService;
 
-    private final RiskModelConverter converter;
+    private final RiskModelConverter riskConverter;
 
-    public RiskController(RiskService riskService, RiskModelConverter converter) {
+    private final RiskPatchFactory riskPatchFactory;
+
+    public RiskController(RiskService riskService, RiskModelConverter converter, RiskPatchFactory riskPatchFactory) {
         this.riskService = riskService;
-        this.converter = converter;
+        this.riskConverter = converter;
+        this.riskPatchFactory = riskPatchFactory;
     }
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<RiskJson> createRisk(@Valid @RequestBody RiskJson riskJson) {
-        riskService.createRisk(converter.convertToRiskModel(riskJson));
+        riskService.createRisk(riskConverter.convertToRiskModel(riskJson));
 
         Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskJson.getId())).withSelfRel();
         riskJson.add(selfLink);
@@ -43,7 +48,7 @@ public class RiskController {
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<CollectionModel<RiskJson>> getRisks() {
         CollectionModel<RiskJson> response = CollectionModel.of(riskService.listAll()
-                .stream().filter(Objects::nonNull).map(converter::convertToHttpModel).toList());
+                .stream().filter(Objects::nonNull).map(riskConverter::convertToHttpModel).toList());
         return ResponseEntity.ok(response);
     }
 
@@ -54,7 +59,7 @@ public class RiskController {
             throw new RiskIdentifierMisMatchException(riskIdentifier, riskJson.getId());
         }
 
-        riskService.createRisk(converter.convertToRiskModel(riskJson));
+        riskService.createRisk(riskConverter.convertToRiskModel(riskJson));
         Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskIdentifier)).withSelfRel();
         riskJson.add(selfLink);
         return ResponseEntity.ok().body(riskJson);
@@ -63,6 +68,13 @@ public class RiskController {
     @GetMapping(value = "/{riskIdentifier}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<RiskJson> getRisk(@PathVariable("riskIdentifier") Long riskIdentifier) {
         RiskIdentifier id = SimpleNumericRiskIdentifier.builder().withCurrentNumber(riskIdentifier).build();
-        return ResponseEntity.ok().body(converter.convertToHttpModel(riskService.get(id)));
+        return ResponseEntity.ok().body(riskConverter.convertToHttpModel(riskService.get(id)));
+    }
+
+    @PatchMapping(path = "/{riskIdentifier}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RiskJson> patchRisk(@PathVariable("riskIdentifier") Long riskIdentifier, @RequestBody JsonPatch jsonPatch) {
+        RiskIdentifier id = SimpleNumericRiskIdentifier.builder().withCurrentNumber(riskIdentifier).build();
+        RiskPatchTO riskPatchTO = riskPatchFactory.createPatch(id, jsonPatch);
+        return ResponseEntity.ok().body(riskConverter.convertToHttpModel(riskService.updateRisk(riskPatchTO)));
     }
 }

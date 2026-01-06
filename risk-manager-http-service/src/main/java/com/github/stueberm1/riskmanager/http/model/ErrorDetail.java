@@ -1,17 +1,18 @@
 package com.github.stueberm1.riskmanager.http.model;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 @JsonPropertyOrder({"detail", "pointer"})
 public class ErrorDetail {
 
     private String detail;
-    private String pointer;
+    private JsonPointer pointer;
 
     public ErrorDetail() {
     }
 
-    public ErrorDetail(String detail, String pointer) {
+    public ErrorDetail(String detail, JsonPointer pointer) {
         this.detail = detail;
         this.pointer = pointer;
     }
@@ -24,11 +25,12 @@ public class ErrorDetail {
         this.detail = detail;
     }
 
-    public String getPointer() {
+    @JsonSerialize(using = JsonPointerSerializer.class)
+    public JsonPointer getPointer() {
         return pointer;
     }
 
-    public void setPointer(String pointer) {
+    public void setPointer(JsonPointer pointer) {
         this.pointer = pointer;
     }
 }

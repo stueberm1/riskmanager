@@ -84,12 +84,12 @@ public abstract class Description {
         List<EntityConstraintViolationException.EntityConstraintViolation> violations = new CopyOnWriteArrayList<>();
 
         if (value.length() < MINIMUM_DESCRIPTION_LENGTH) {
-            violations.add(new EntityConstraintViolationException.EntityConstraintViolation("risk.description",
+            violations.add(new EntityConstraintViolationException.EntityConstraintViolation("#/description",
                     "Description must have at least 10 characters length"));
         }
 
         if (value.length() > MAXIMUM_DESCRIPTION_LENGTH) {
-            violations.add(new EntityConstraintViolationException.EntityConstraintViolation("risk.description",
+            violations.add(new EntityConstraintViolationException.EntityConstraintViolation("#/description",
                     "Description must have at most 50 characters length"));
         }
 
