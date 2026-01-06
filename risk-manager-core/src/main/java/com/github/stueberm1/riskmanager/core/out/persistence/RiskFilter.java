@@ -42,6 +42,7 @@ public abstract class RiskFilter {
     }
 
     /// The contingency plan **must** be unspecified yet
+    /// @return contingency planning **must** be unset or be irrelevant for the query aka {@code null}
     public Boolean contingencyPlanningIsEmpty() {
         return contingencyPlanningIsEmpty;
     }
