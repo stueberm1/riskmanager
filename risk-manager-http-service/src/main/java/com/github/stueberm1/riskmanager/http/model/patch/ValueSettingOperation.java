@@ -17,14 +17,15 @@ public abstract class ValueSettingOperation  extends JsonPatchOperation {
         switch (rootToken) {
             case "id" -> throw new IllegalValueModificationRequestException(
                     "Id is primary key of the resource and is immutable",
-                    path);
-            case "description" -> throw new IllegalValueModificationRequestException("Description is immutable", path);
+                    path, builder.getRiskIdentifier());
+            case "description" -> throw new IllegalValueModificationRequestException("Description is immutable", path,
+                    builder.getRiskIdentifier());
             case "severity" ->  builder.setSeverity(Severity.valueOf(getValue()));
             case "probabilityOfOccurrence" -> builder.setProbabilityOfOccurrence(ProbabilityOfOccurrence.valueOf(getValue()));
             case "details" -> builder.setDetails(getValue());
             case "contingencyPlanning" -> builder.setContingencyPlanning(getValue());
             case "mitigationStrategy" -> builder.setMitigationStrategy(getValue());
-            default -> throw new InvalidJsonPointerException(path);
+            default -> throw new InvalidJsonPointerException(builder.getRiskIdentifier(), path);
         }
 
     }

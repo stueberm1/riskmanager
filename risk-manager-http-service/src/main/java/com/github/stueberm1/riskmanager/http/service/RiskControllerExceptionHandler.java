@@ -1,22 +1,24 @@
 package com.github.stueberm1.riskmanager.http.service;
 
+import static java.lang.String.format;
+
 import com.github.stueberm1.riskmanager.core.in.risk.RiskIdentifierAlreadyInUseException;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskNotFoundException;
 import com.github.stueberm1.riskmanager.http.model.ErrorDetail;
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
+import com.github.stueberm1.riskmanager.http.model.patch.IllegalValueModificationRequestException;
+import com.github.stueberm1.riskmanager.http.model.patch.InvalidJsonPointerException;
+import com.github.stueberm1.riskmanager.http.model.patch.UnsupportedJsonPatchOperationException;
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalIdNumberException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException;
-import jakarta.validation.ConstraintViolation;
-import org.springframework.boot.context.properties.bind.Nested;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -150,6 +152,53 @@ public class RiskControllerExceptionHandler {
         problemDetails.setDetail(String.format("The identifier %s does not exist.", ex.getRiskIdentifier().id()));
         URI uri = WebMvcLinkBuilder.linkTo(RiskController.class).slash(ex.getRiskIdentifier().id()).toUri();
         problemDetails.setInstance(uri.toString());
+        return problemDetails;
+    }
+
+    @ExceptionHandler(value = InvalidJsonPointerException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleInvalidJsonPointerException(InvalidJsonPointerException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(InvalidJsonPointerException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("invalid-json-pointer"));
+        problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        problemDetails.setTitle("Invalid JSON Pointer");
+        problemDetails.setDetail(format("The JSON Pointer %s points to a non-existing property.",
+                ex.getJsonPointer().getRawPath()));
+        URI uri = WebMvcLinkBuilder.linkTo(RiskController.class).slash(ex.getRiskIdentifier().id()).toUri();
+        problemDetails.setInstance(uri.toString());
+        return problemDetails;
+    }
+
+    @ExceptionHandler(value = UnsupportedJsonPatchOperationException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleUnsupportedJsonPatchOperationException(UnsupportedJsonPatchOperationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(UnsupportedJsonPatchOperationException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("invalid-json-patch-operation"));
+        problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        problemDetails.setTitle("Invalid JSON Patch Operation");
+        problemDetails.setDetail(format("Json-Patch %s is not supported. Reason: %s", ex.getOperationName(), ex.getMessage()));
+        return  problemDetails;
+    }
+
+    @ExceptionHandler(value = IllegalValueModificationRequestException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    public ResponseEntity<ProblemDetails> handleIllegalValueModificationRequestException(IllegalValueModificationRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
+    }
+
+    private static ProblemDetails convertTo(IllegalValueModificationRequestException ex) {
+        ProblemDetails problemDetails = new ProblemDetails();
+        problemDetails.setType(problemTypeFactory("illegal-value-modification"));
+        problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        problemDetails.setTitle("Illegal value modification");
+        URI uri = WebMvcLinkBuilder.linkTo(RiskController.class).slash(ex.getRiskIdentifier().id()).toUri();
+        problemDetails.setInstance(uri.toString());
+        problemDetails.setErrors(new ErrorDetail[] {new ErrorDetail(ex.getMessage(), ex.getPath())});
         return problemDetails;
     }
 

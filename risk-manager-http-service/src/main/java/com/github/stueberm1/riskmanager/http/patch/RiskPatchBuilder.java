@@ -19,6 +19,10 @@ public class RiskPatchBuilder {
         this.contingencyPlanning = contingencyPlanning;
     }
 
+    public RiskIdentifier getRiskIdentifier() {
+        return riskIdentifier;
+    }
+
     public void setDetails(String details) {
         this.details = details;
     }
