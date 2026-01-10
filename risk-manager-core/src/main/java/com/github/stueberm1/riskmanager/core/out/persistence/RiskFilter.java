@@ -9,13 +9,35 @@ import com.github.stueberm1.riskmanager.types.risk.Severity;
 ///
 /// Each attribute of the {@code RiskFilter} defines a filter option in the way its attribute name describes.
 ///
+/// ## Usage
+/// The {@code RiskFilter} provides an extensible, self-explaining fluid api to configure the filter in a proper way,
+/// without any misinterpretable orders.
+///
+/// Ideally, extensions of the abstract {@code Riskfilter} provides a static factory operation returning a {@link FilterSpec}
+/// instance. The {@link FilterSpec} is backed by a realization of the abstract {@link Builder}.
+///
+/// ```java
+/// public static FilterSpec findRisksWhere() {
+///         return new Builder();
+///     }
+/// ```
+///
+/// Having such a factory, the configuration of a concrete {@code RiskFilter} is easy and descriptive.
+///
+/// ```java
+/// RiskFilter filter = SimpleRiskFilter.findRisksWhere().severity()isEqualTo(Severity.MEDIUM)
+///                                     .and().mitigationStrategy().isEmpty()
+///                                     .create();
+/// ```
+///
+///
 /// @see "https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle"
 /// @see "https://www.dbvis.com/thetable/a-complete-guide-to-the-sql-like-operator"
-/// @implSpec The attributes itself does not describe, how to combine them. The definition how to aggregate them is defined
+/// @apiNote  The attributes itself does not describe, how to combine them. The definition how to aggregate them is defined
 ///     by {@link DecisionSpec}: The attributes are aggregated in a 'and'-relation, so the result **must** meet **all**
 ///     of the specified filters.
-///     {@code contains}-operations **must** work like the like operation {@code %expression%} in ansi-sql, while
-///     {@code isEqualTo}-operations **must** return the exact value (ignore case)
+///     {@code contains}-operations **must** work like the like-operation (){@code where value like %expression%}) in ansi-sql,
+///  while {@code isEqualTo}-operations **must** return the exact value (ignore case)
 public abstract class RiskFilter {
 
     private final Severity severityIsEqualTo;
@@ -41,47 +63,58 @@ public abstract class RiskFilter {
         return contingencyPlanningContains;
     }
 
-    /// The contingency plan **must** be unspecified yet
-    /// @return contingency planning **must** be unset or be irrelevant for the query aka {@code null}
+    /// The contingency plan **must** be unspecified yet.
+    /// @return if true the contingency planning **must** be unset or be irrelevant for the query aka {@code null}
     public Boolean contingencyPlanningIsEmpty() {
         return contingencyPlanningIsEmpty;
     }
 
+    ///  The description (headline) of the risk **must** contain the given text.
+    /// @return the partial text the system is looking for
     public String descriptionContains() {
         return descriptionContains;
     }
 
+    /// The details section of the risk **must** contain the given text.
+    /// @return the partial text the system is looking for
     public String detailsContains() {
         return detailsContains;
     }
 
+    /// The mitigation strategy **must** contain the configured text.
+    /// @return the text the provider must looking for in the mitigation strategy
     public String mitigationStrategyContains() {
         return mitigationStrategyContains;
     }
 
+    ///  If set, the mitigation strategy **must** be unset yet.
+    /// @return true, if the mitigation strategy should  be empty
     public Boolean mitigationStrategyIsEmpty() {
         return mitigationStrategyIsEmpty;
     }
 
+    /// The resulting {@link RiskDao} **must** all have the given probability of occurrence.
+    /// @return search filter
     public ProbabilityOfOccurrence probabilityOfOccurrenceIsEqualTo() {
         return probabilityOfOccurrenceIsEqualTo;
     }
 
+    /// The resulting {@link RiskDao} **must** all have the given severity.
+    /// @return search filter
     public Severity severityIsEqualTo() {
         return severityIsEqualTo;
     }
 
-    protected RiskFilter(Builder<?, ? extends RiskFilter> builder) {
-        this.severityIsEqualTo = builder.severityIsEqualTo;
-        this.contingencyPlanningContains = builder.contingencyPlanningContains;
-        this.contingencyPlanningIsEmpty = builder.contingencyPlanningIsEmpty;
-        this.probabilityOfOccurrenceIsEqualTo = builder.probabilityOfOccurrenceIsEqualTo;
-        this.descriptionContains = builder.descriptionContains;
-        this.detailsContains = builder.detailsContains;
-        this.mitigationStrategyContains = builder.mitigationStrategyContains;
-        this.mitigationStrategyIsEmpty = builder.mitigationStrategyIsEmpty;
-    }
-
+    /// The {@code FilterSpec} specifies the attributes of the {@link RiskDao} the persistence provider **must*
+    /// be able to look for.
+    ///
+    /// Each attribute-operation (such as {@link FilterSpec#severity()}) must return the filter-operations specified for
+    /// that  attribute.
+    /// To provide the fluent api described in the javadoc header of {@link RiskFilter}, each filter-operation **must**
+    /// return a {@link DecisionSpec}.
+    ///
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface FilterSpec<T, R extends RiskFilter> {
         SeverityFilterSpec<T, R> severity();
         ProbabilityOfOccurrenceFilterSpec<T, R> probabilityOfOccurrence();
@@ -91,12 +124,31 @@ public abstract class RiskFilter {
         DetailsSpec<T,R> details();
     }
 
+    /// The {@code DecisionSpec} allows clients of the api to decide either to add another constraint to the
+    /// {@link RiskFilter} or to create the final {@code RiskFilter}.
+    ///
+    /// It is used as the result of a filter-operation definition.
+    ///
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface DecisionSpec<T, R extends RiskFilter> {
+        /// Adds another and-conjunct filter-option to the {@link RiskFilter}.
+        /// @return Specification of the next filter
         FilterSpec<T, R> and();
+
+        ///  Returns a new instance of the {@link RiskFilter} with the current configuration
+        /// @return The final configured {@link RiskFilter}
         R create();
     }
 
+    /// Specification of the Severity filter options.
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface SeverityFilterSpec<T, R extends RiskFilter> {
+
+        /// Adds an isEqualTo filter on severity to the {@link RiskFilter}.
+        /// @param severity the required severity
+        /// @return the decision point in the configuration flow
         DecisionSpec<T, R> isEqualTo(Severity severity);
     }
 
@@ -116,7 +168,14 @@ public abstract class RiskFilter {
         }
     }
 
+    /// Specification of the probability of occurrence filter options.
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface ProbabilityOfOccurrenceFilterSpec<T, R extends RiskFilter> {
+
+        /// Adds an isEqualTo filter on probability of occurrence to the {@link RiskFilter}.
+        /// @param probabilityOfOccurrence the required probability of occurrence
+        /// @return the decision point in the configuration flow
         DecisionSpec<T, R> isEqualTo(ProbabilityOfOccurrence probabilityOfOccurrence);
     }
 
@@ -136,8 +195,18 @@ public abstract class RiskFilter {
         }
     }
 
+    /// Specification of the mitigation strategy filter options.
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface MitigationStrategySpec<T, R extends RiskFilter> {
+
+        ///  Looks for risks containing the given string in the mitigation strategy
+        /// @param mitigationStrategy a part of the mitigation strategy description
+        /// @return the decision point in the configuration flow
         DecisionSpec<T, R> contains(String mitigationStrategy);
+
+        ///  Looks for risks without a mitigation strategy.
+        /// @return the decision point in the configuration flow
         DecisionSpec<T, R> isEmpty();
     }
 
@@ -161,6 +230,8 @@ public abstract class RiskFilter {
         }
     }
 
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface ContingencyPlanningSpec<T, R extends RiskFilter> {
         DecisionSpec<T, R> contains(String contingencyPlanningContains);
         DecisionSpec<T, R> isEmpty();
@@ -186,6 +257,8 @@ public abstract class RiskFilter {
         }
     }
 
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface DescriptionSpec<T, R extends RiskFilter> {
         DecisionSpec<T, R> contains(String description);
     }
@@ -204,6 +277,8 @@ public abstract class RiskFilter {
         }
     }
 
+    /// @param <T> Type of the concrete {@link FilterSpec} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     public interface DetailsSpec<T, R extends RiskFilter> {
         DecisionSpec<T, R> contains(String details);
     }
@@ -222,7 +297,26 @@ public abstract class RiskFilter {
         }
     }
 
+    ///
+    /// @param builder basic configuration parameters of the new filter
+    protected RiskFilter(Builder<?, ? extends RiskFilter> builder) {
+        this.severityIsEqualTo = builder.severityIsEqualTo;
+        this.contingencyPlanningContains = builder.contingencyPlanningContains;
+        this.contingencyPlanningIsEmpty = builder.contingencyPlanningIsEmpty;
+        this.probabilityOfOccurrenceIsEqualTo = builder.probabilityOfOccurrenceIsEqualTo;
+        this.descriptionContains = builder.descriptionContains;
+        this.detailsContains = builder.detailsContains;
+        this.mitigationStrategyContains = builder.mitigationStrategyContains;
+        this.mitigationStrategyIsEmpty = builder.mitigationStrategyIsEmpty;
+    }
 
+
+    /// The {@code Builder} is the abstract realization of the {@link FilterSpec} as well as of the {@link DecisionSpec}.
+    /// Concrete {@link RiskFilter} realization also **must** extend this builder and **must** at least realize
+    /// {@link DecisionSpec#create()}.
+    ///
+    /// @param <T> Type of the concrete {@link Builder} realization
+    /// @param <R> Type of the resulting {@link RiskFilter} realization
     protected static abstract class Builder<T extends Builder<T,R>, R extends RiskFilter>
             implements FilterSpec<T, R>,  DecisionSpec<T, R> {
 
@@ -277,6 +371,19 @@ public abstract class RiskFilter {
             return new DetailsSpecImpl<>(self());
         }
 
+        /// Returns the concrete Builder itself. It allows the abstract builder to access the concrete realization without
+        /// knowing them directly.
+        ///
+        /// @return typed instance of the concrete builder
+        /// @implSpec
+        /// Implementations **must** return the concrete Builder having the specified type.
+        ///
+        ///```java
+        ///   @Override
+        ///   public ConcreteBuilder self( {
+        ///       return this;
+        ///   }
+        ///```
         protected abstract T self();
 
     }

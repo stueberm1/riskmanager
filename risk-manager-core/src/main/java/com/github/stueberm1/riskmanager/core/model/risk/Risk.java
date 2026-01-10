@@ -266,7 +266,6 @@ public abstract class Risk {
             return self();
         }
 
-        ///
         /// Returns the concrete Builder itself. It allows the abstract builder to access the concrete realization without
         /// knowing them directly.
         ///
@@ -275,11 +274,11 @@ public abstract class Risk {
         /// Implementations **must** return the concrete Builder having the specified type.
         ///
         ///```java
+        ///   @Override
         ///   public ConcreteBuilder self( {
         ///       return this;
         ///   }
         ///```
-        ///
         protected abstract T self();
 
         protected abstract Risk build();
