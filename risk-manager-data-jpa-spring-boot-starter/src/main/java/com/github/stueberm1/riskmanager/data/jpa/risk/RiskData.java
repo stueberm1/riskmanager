@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;;
 /// {@code RiskData} defines the object-relational mapping between data tables and the java code.
 /// Instances of the {@code RiskData} represents a single row in the corresponding data table.
 @Entity
-@Table(name="RISK_DATA")
+@Table(name="risk_data")
 public class RiskData {
 
 
@@ -73,6 +73,7 @@ public class RiskData {
     }
 
     @NotBlank
+    @Lob
     @Column(name = "details")
     public String getDetails() {
         return details;
@@ -82,6 +83,7 @@ public class RiskData {
         this.details = details;
     }
 
+    @Lob
     @Column(name = "contingency_planning")
     public String getContingencyPlanning() {
         return contingencyPlanning;
@@ -91,6 +93,7 @@ public class RiskData {
         this.contingencyPlanning = contingencyPlanning;
     }
 
+    @Lob
     @Column(name = "mitigation_strategy")
     public String getMitigationStrategy() {
         return mitigationStrategy;

@@ -15,9 +15,4 @@ public class RiskDataAccessAdapterConfiguration {
                                                        SimpleRiskDaoDataConverter riskDataConverter) {
         return new RiskDataAccessAdapter(riskDataRepository, riskDataConverter);
     }
-
-    @Bean
-    public SimpleRiskDaoDataConverter riskDataConverter() {
-        return new SimpleRiskDaoConverter();
-    }
 }
