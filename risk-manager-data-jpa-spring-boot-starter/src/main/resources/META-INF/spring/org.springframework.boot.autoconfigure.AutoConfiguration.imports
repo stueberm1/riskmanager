@@ -1,2 +1,5 @@
 com.github.stueberm1.riskmanager.data.jpa.risk.RiskRepositoryAutoConfiguration
+com.github.stueberm1.riskmanager.data.jpa.provider.RiskDataConverterConfiguration
 com.github.stueberm1.riskmanager.data.jpa.provider.RiskDataAccessAdapterConfiguration
+com.github.stueberm1.riskmanager.data.jpa.provider.RiskReportingServiceConfiguration
+

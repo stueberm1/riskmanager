@@ -9,6 +9,7 @@ import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
 import com.github.stueberm1.riskmanager.core.out.persistence.SimpleRiskDao;
 import com.github.stueberm1.riskmanager.data.jpa.provider.RiskDataAccessAdapterConfiguration;
+import com.github.stueberm1.riskmanager.data.jpa.provider.RiskDataConverterConfiguration;
 import com.github.stueberm1.riskmanager.data.jpa.risk.RiskData;
 import com.github.stueberm1.riskmanager.data.jpa.risk.RiskDataRepository;
 import com.github.stueberm1.riskmanager.data.jpa.risk.RiskRepositoryAutoConfiguration;
@@ -29,7 +30,8 @@ import java.util.stream.Stream;
 
 @DataJpaTest
 @ActiveProfiles({"test"})
-@ContextConfiguration(classes = {RiskDataAccessAdapterConfiguration.class, RiskRepositoryAutoConfiguration.class})
+@ContextConfiguration(classes = {RiskDataAccessAdapterConfiguration.class, RiskRepositoryAutoConfiguration.class,
+        RiskDataConverterConfiguration.class})
 class RiskDataAccessServiceTest {
 
     @Autowired
