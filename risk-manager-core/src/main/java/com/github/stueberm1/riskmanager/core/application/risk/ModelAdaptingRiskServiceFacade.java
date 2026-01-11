@@ -6,12 +6,10 @@ import com.github.stueberm1.riskmanager.core.application.risk.list.Risks;
 import com.github.stueberm1.riskmanager.core.application.risk.update.PatchRisk;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
 import com.github.stueberm1.riskmanager.core.domain.RiskPatchFactory;
+import com.github.stueberm1.riskmanager.core.in.risk.filter.FilterSpec;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
-import com.github.stueberm1.riskmanager.core.model.risk.ContingencyPlanning;
-import com.github.stueberm1.riskmanager.core.model.risk.MitigationStrategy;
-import com.github.stueberm1.riskmanager.core.model.risk.Risk;
 import com.github.stueberm1.riskmanager.core.model.risk.RiskPatch;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 
@@ -22,6 +20,8 @@ import static java.util.Objects.requireNonNull;
 public class ModelAdaptingRiskServiceFacade  implements RiskService {
 
     private final RiskFactory riskFactory;
+
+    private final RiskConverter riskConverter;
 
     private final RiskPatchFactory riskPatchFactory;
 
@@ -40,25 +40,25 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
 
     @Override
     public RiskTO get(RiskIdentifier id) {
-        return convert(riskReader.read(id));
+        return riskConverter.convert(riskReader.read(id));
     }
 
-    private static RiskTO convert(final Risk risk) {
-        return new RiskTO(risk.id(), risk.severity(), risk.probabilityOfOccurrence(), risk.description().value(),
-                risk.details().detailContent(), risk.contingencyPlanning().map(ContingencyPlanning::plan).orElse(null),
-                risk.getMitigationStrategy().map(MitigationStrategy::strategy).orElse(null));
-    }
 
     @Override
     public List<RiskTO> listAll() {
-        return risks.listAll().stream().map(ModelAdaptingRiskServiceFacade::convert).toList();
+        return risks.listAll().stream().map(riskConverter::convert).toList();
+    }
+
+    @Override
+    public FilterSpec listFilteredWith() {
+        return risks.listFilteredWith();
     }
 
     @Override
     public RiskTO updateRisk(RiskPatchTO riskPatchTo) {
         // tag::PatchRiskUsage[]
         RiskPatch riskPatch = riskPatchFactory.create(riskPatchTo); // (.)
-        return convert(patchRisk.patchRiskIdentifiedBy(riskPatchTo.id()).with(riskPatch)); // (.)
+        return riskConverter.convert(patchRisk.patchRiskIdentifiedBy(riskPatchTo.id()).with(riskPatch)); // (.)
         // end::PatchRiskUsage[]
     }
 
@@ -73,6 +73,7 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
         this.risks = requireNonNull(builder.risks, "risks");
         this.patchRisk = requireNonNull(builder.patchRisk, "patchRisk");
         this.riskPatchFactory = requireNonNull(builder.riskPatchFactory, "riskPatchFactory");
+        this.riskConverter = requireNonNull(builder.riskConverter, "riskConverter");
     }
 
     public static final class Builder {
@@ -109,6 +110,12 @@ public class ModelAdaptingRiskServiceFacade  implements RiskService {
         private PatchRisk patchRisk;
         public Builder patchRisk(PatchRisk patchRisk) {
             this.patchRisk = patchRisk;
+            return this;
+        }
+
+        private RiskConverter riskConverter;
+        public Builder riskConverter(RiskConverter riskConverter) {
+            this.riskConverter = riskConverter;
             return this;
         }
 

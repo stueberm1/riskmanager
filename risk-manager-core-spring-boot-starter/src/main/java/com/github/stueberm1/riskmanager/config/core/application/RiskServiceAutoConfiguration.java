@@ -1,6 +1,7 @@
 package com.github.stueberm1.riskmanager.config.core.application;
 
 import com.github.stueberm1.riskmanager.core.application.risk.ModelAdaptingRiskServiceFacade;
+import com.github.stueberm1.riskmanager.core.application.risk.RiskConverter;
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
 import com.github.stueberm1.riskmanager.core.application.risk.list.Risks;
@@ -18,7 +19,8 @@ public class RiskServiceAutoConfiguration {
 
     @Bean
     public RiskService riskService(RiskFactory riskFactory, RiskPatchFactory riskPatchFactory, CreateRisk createRisk,
-                                   RiskReader riskReader, Risks risks, PatchRisk patchRisk) {
+                                   RiskReader riskReader, Risks risks, PatchRisk patchRisk,
+                                   RiskConverter riskConverter) {
         return ModelAdaptingRiskServiceFacade.builder()
                 .riskFactory(riskFactory)
                 .createRisk(createRisk)
@@ -26,6 +28,7 @@ public class RiskServiceAutoConfiguration {
                 .risks(risks)
                 .riskPatchFactory(riskPatchFactory)
                 .patchRisk(patchRisk)
+                .riskConverter(riskConverter)
                 .build();
     }
 }
