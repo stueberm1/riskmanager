@@ -1,3 +1,4 @@
+com.github.stueberm1.riskmanager.config.core.application.RiskConverterAutoConfiguration
 com.github.stueberm1.riskmanager.config.core.domain.RiskFactoryAutoConfiguration
 com.github.stueberm1.riskmanager.config.core.domain.RiskPatchFactoryAutoConfiguration
 com.github.stueberm1.riskmanager.config.core.application.create.CreateRiskAutoConfiguration

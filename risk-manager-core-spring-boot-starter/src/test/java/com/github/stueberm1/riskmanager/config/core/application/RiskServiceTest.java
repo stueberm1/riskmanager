@@ -19,6 +19,7 @@ import com.github.stueberm1.riskmanager.config.core.domain.RiskPatchFactoryAutoC
 import com.github.stueberm1.riskmanager.core.in.risk.*;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDao;
 import com.github.stueberm1.riskmanager.core.out.persistence.RiskDataAccessService;
+import com.github.stueberm1.riskmanager.core.out.persistence.RiskReportingService;
 import com.github.stueberm1.riskmanager.core.out.persistence.SimpleRiskDao;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
@@ -41,13 +42,17 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 @SpringBootTest
-@ContextConfiguration(classes = {RiskFactoryAutoConfiguration.class, RiskPatchFactoryAutoConfiguration.class,
+@ContextConfiguration(classes = {RiskConverterAutoConfiguration.class, RiskFactoryAutoConfiguration.class,
+        RiskPatchFactoryAutoConfiguration.class,
         CreateRiskAutoConfiguration.class, UpdateRiskAutoConfiguration.class, RiskFinderAutoConfiguration.class,
         RiskReaderAutoConfiguration.class, RisksAutoConfiguration.class, RiskServiceAutoConfiguration.class})
 class RiskServiceTest {
 
     @MockitoBean
     private RiskDataAccessService riskDataAccessService;
+
+    @MockitoBean
+    private RiskReportingService riskReportingService;
 
     @Autowired
     private RiskService riskService;

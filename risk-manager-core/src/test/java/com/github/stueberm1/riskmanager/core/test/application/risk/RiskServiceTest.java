@@ -1,8 +1,11 @@
 package com.github.stueberm1.riskmanager.core.test.application.risk;
 
+import com.github.stueberm1.riskmanager.core.application.risk.DefaultRiskConverter;
 import com.github.stueberm1.riskmanager.core.application.risk.ModelAdaptingRiskServiceFacade;
 import com.github.stueberm1.riskmanager.core.application.risk.create.CreateRisk;
 import com.github.stueberm1.riskmanager.core.application.risk.find.RiskReader;
+import com.github.stueberm1.riskmanager.core.application.risk.list.RiskFilterBuilder;
+import com.github.stueberm1.riskmanager.core.application.risk.list.RiskLister;
 import com.github.stueberm1.riskmanager.core.application.risk.list.Risks;
 import com.github.stueberm1.riskmanager.core.application.risk.update.PatchRisk;
 import com.github.stueberm1.riskmanager.core.domain.RiskFactory;
@@ -10,6 +13,7 @@ import com.github.stueberm1.riskmanager.core.domain.RiskPatchFactory;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
 import com.github.stueberm1.riskmanager.core.model.risk.*;
+import com.github.stueberm1.riskmanager.core.out.persistence.RiskFilter;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
@@ -22,6 +26,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +56,9 @@ class RiskServiceTest {
     private PatchRisk.PatchSpecification patchSpecification;
 
     @Mock
+    private RiskLister riskLister;
+
+    @Mock
     private Risks risks;
 
     private ModelAdaptingRiskServiceFacade modelAdaptingRiskServiceFacade;
@@ -70,6 +79,7 @@ class RiskServiceTest {
                 .risks(risks)
                 .patchRisk(patchRisk)
                 .riskPatchFactory(riskPatchFactory)
+                .riskConverter(new DefaultRiskConverter())
                 .build();
     }
 
@@ -147,6 +157,39 @@ class RiskServiceTest {
         return new RiskTO(risk.id(), risk.severity(), risk.probabilityOfOccurrence(), risk.description().value(),
                 risk.details().detailContent(), risk.contingencyPlanning().map(ContingencyPlanning::plan).orElse(null),
                 risk.getMitigationStrategy().map(MitigationStrategy::strategy).orElse(null));
+    }
+
+    @Captor
+    private ArgumentCaptor<RiskFilter> riskFilterCaptor;
+
+    @Nested
+    class ListRisksFiltered {
+        @BeforeEach
+        void setUp() {
+            given(riskLister.listWithFilter(any())).willReturn(List.of(TEST_RISK));
+            given(risks.listFilteredWith()).willReturn(new RiskFilterBuilder(riskLister, new DefaultRiskConverter()));
+        }
+
+        @Test
+        void testListRisksFiltered() {
+            modelAdaptingRiskServiceFacade.listFilteredWith()
+                    .severity().isIgnored()
+                    .andProbabilityOfOccurrence().isEqualTo(ProbabilityOfOccurrence.HIGH)
+                    .andDescription().isIgnored()
+                    .andDetails().isIgnored()
+                    .andContingencyPlanning().contains("Framework")
+                    .andMitigationStrategy().isEmpty()
+                    .toList();
+            then(riskLister).should(times(1)).listWithFilter(riskFilterCaptor.capture());
+            assertThat(riskFilterCaptor.getValue())
+                    .isNotNull()
+                    .returns(null, RiskFilter::severityIsEqualTo)
+                    .returns(ProbabilityOfOccurrence.HIGH, RiskFilter::probabilityOfOccurrenceIsEqualTo)
+                    .returns(null, RiskFilter::descriptionContains)
+                    .returns(null, RiskFilter::detailsContains)
+                    .returns("Framework", RiskFilter::contingencyPlanningContains)
+                    .returns(null, RiskFilter::mitigationStrategyContains);
+        }
     }
 
     @Nested
