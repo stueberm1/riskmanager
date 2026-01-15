@@ -1,12 +1,14 @@
 package com.github.stueberm1.riskmanager.http.test.service;
 
 import com.github.stueberm1.riskmanager.core.in.risk.*;
+import com.github.stueberm1.riskmanager.core.in.risk.filter.FilterSpec;
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
 import com.github.stueberm1.riskmanager.http.model.patch.*;
 import com.github.stueberm1.riskmanager.http.service.RiskController;
 import com.github.stueberm1.riskmanager.http.service.RiskControllerExceptionHandler;
 import com.github.stueberm1.riskmanager.http.service.RiskManagerHttpConfiguration;
+import com.github.stueberm1.riskmanager.http.test.mock.MockRiskFilter;
 import com.github.stueberm1.riskmanager.types.risk.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,6 +37,7 @@ import java.util.Map;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.times;
@@ -148,7 +151,7 @@ class RestControllerTest {
     class GetRiskList {
 
         @Test
-        void getRiskList() throws Exception {
+        void getRiskListWithoutFilter() throws Exception {
             given(riskService.listAll()).willReturn(knownRisks().toList());
 
             //when
@@ -156,7 +159,37 @@ class RestControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$._embedded.riskJsonList.length()").value(knownRisks().toList().size()))
-                    .andDo(document("get-list"));;
+                    .andDo(document("get-list"));
+            then(riskService).should(times(1)).listAll();
+            then(riskService).shouldHaveNoMoreInteractions();
+        }
+
+        @Test
+        void startingAListRequestForSeverityAndProbabilityOfOccurrenceAndMitigationPlanningWillRunAFilterSpecRequest() throws Exception {
+            FilterSpec mockFilterSpec = MockRiskFilter.newInstance();
+
+            given(riskService.listFilteredWith()).willReturn(mockFilterSpec);
+
+            // when
+            mockMvc.perform(get(API_BASE)
+                    .param("severity", "MEDIUM")
+                    .param("probabilityOfOccurrence", "LOW")
+                    .param("contingencyPlanning", "isEmpty()")
+                    .param("mitigationStrategy", "praying")
+            ).andExpect(status().isOk())
+             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+            then(riskService).should(times(1)).listFilteredWith();
+            then(riskService).shouldHaveNoMoreInteractions();
+
+            MockRiskFilter expectedRequest = MockRiskFilter.builder()
+                    .severityIsEqualTo(Severity.MEDIUM)
+                    .probabilityOfOccurrence(ProbabilityOfOccurrence.LOW)
+                    .contingencyPlanningIsEmpty(true)
+                    .mitigationStrategyContains("praying")
+                    .build();
+            assertThat(mockFilterSpec).isEqualTo(expectedRequest);
+
         }
 
     }

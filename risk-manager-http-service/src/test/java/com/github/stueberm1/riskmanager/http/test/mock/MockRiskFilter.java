@@ -5,6 +5,10 @@ import com.github.stueberm1.riskmanager.core.in.risk.SeverityFilterSpec;
 import com.github.stueberm1.riskmanager.core.in.risk.filter.*;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Collections;
 import java.util.List;
@@ -82,19 +86,57 @@ public class MockRiskFilter implements FilterSpec, FilterProbabilityOfOccurrence
         this.detailsContains = builder.detailsContains;
         this.contingencyPlanningContains = builder.contingencyPlanningContains;
         this.contingencyPlanningIsEmpty = builder.contingencyPlanningIsEmpty;
-        this.mitigationStrategyContains = builder.contingencyPlanningContains;
+        this.mitigationStrategyContains = builder.mitigationStrategyContains;
         this.mitigationStrategyIsEmpty = builder.mitigationStrategyIsEmpty;
     }
 
     public static final class Builder {
         private Severity severityIsEqualTo;
+        public Builder severityIsEqualTo(Severity severityIsEqualTo) {
+            this.severityIsEqualTo = severityIsEqualTo;
+            return this;
+        }
+
         private ProbabilityOfOccurrence probabilityOfOccurrenceIsEqualTo;
+        public Builder probabilityOfOccurrence(ProbabilityOfOccurrence probabilityOfOccurrenceIsEqualTo) {
+            this.probabilityOfOccurrenceIsEqualTo = probabilityOfOccurrenceIsEqualTo;
+            return this;
+        }
+
         private String descriptionContains;
+        public Builder descriptionContains(String descriptionContains) {
+            this.descriptionContains = descriptionContains;
+            return this;
+        }
+
         private String detailsContains;
+        public Builder detailsContains(String detailsContains) {
+            this.detailsContains = detailsContains;
+            return this;
+        }
+
         private String contingencyPlanningContains;
+        public Builder contingencyPlanningContains(String contingencyPlanningContains) {
+            this.contingencyPlanningContains = contingencyPlanningContains;
+            return this;
+        }
         private Boolean contingencyPlanningIsEmpty;
+        public Builder contingencyPlanningIsEmpty(boolean contingencyPlanningIsEmpty) {
+            this.contingencyPlanningIsEmpty = contingencyPlanningIsEmpty;
+            return this;
+        }
+
         private Boolean mitigationStrategyIsEmpty;
-        private Boolean mitigationStrategyIsNotEmpty;
+        public Builder mitigationStrategy(Boolean mitigationStrategyIsEmpty) {
+            this.mitigationStrategyIsEmpty = mitigationStrategyIsEmpty;
+            return this;
+        }
+
+        private String mitigationStrategyContains;
+        public Builder mitigationStrategyContains(String mitigationStrategyContains) {
+            this.mitigationStrategyContains = mitigationStrategyContains;
+            return this;
+        }
 
         public MockRiskFilter build() {
             return new MockRiskFilter(this);
@@ -154,7 +196,7 @@ public class MockRiskFilter implements FilterSpec, FilterProbabilityOfOccurrence
 
     @Override
     public DescriptionFilterSpec andDescription() {
-        return null;
+        return new DescriptionFilterConfigurer(this);
     }
 
     private static class DescriptionFilterConfigurer implements DescriptionFilterSpec {
@@ -216,20 +258,20 @@ public class MockRiskFilter implements FilterSpec, FilterProbabilityOfOccurrence
 
         @Override
         public FilterMitigationStrategyStep contains(String snippet) {
-            root.mitigationStrategyContains = snippet;
+            root.contingencyPlanningContains = snippet;
             return root;
         }
 
         @Override
         public FilterMitigationStrategyStep isEmpty() {
-            root.mitigationStrategyIsEmpty = true;
+            root.contingencyPlanningIsEmpty = true;
             return root;
         }
 
         @Override
         public FilterMitigationStrategyStep isIgnored() {
-            root.mitigationStrategyIsEmpty = null;
-            root.severityIsEqualTo = null;
+            root.contingencyPlanningContains = null;
+            root.contingencyPlanningIsEmpty = null;
             return root;
         }
     }
@@ -271,4 +313,51 @@ public class MockRiskFilter implements FilterSpec, FilterProbabilityOfOccurrence
         return Collections.emptyList();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MockRiskFilter that = (MockRiskFilter) o;
+
+        return new EqualsBuilder()
+                .append(severityIsEqualTo, that.severityIsEqualTo)
+                .append(probabilityOfOccurrenceIsEqualTo, that.probabilityOfOccurrenceIsEqualTo)
+                .append(descriptionContains, that.descriptionContains)
+                .append(detailsContains, that.detailsContains)
+                .append(contingencyPlanningContains, that.contingencyPlanningContains)
+                .append(contingencyPlanningIsEmpty, that.contingencyPlanningIsEmpty)
+                .append(mitigationStrategyContains, that.mitigationStrategyContains)
+                .append(mitigationStrategyIsEmpty, that.mitigationStrategyIsEmpty)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(severityIsEqualTo)
+                .append(probabilityOfOccurrenceIsEqualTo)
+                .append(descriptionContains)
+                .append(detailsContains)
+                .append(contingencyPlanningContains)
+                .append(contingencyPlanningIsEmpty)
+                .append(mitigationStrategyContains)
+                .append(mitigationStrategyIsEmpty)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("contingencyPlanningContains", contingencyPlanningContains)
+                .append("severityIsEqualTo", severityIsEqualTo)
+                .append("probabilityOfOccurrenceIsEqualTo", probabilityOfOccurrenceIsEqualTo)
+                .append("descriptionContains", descriptionContains)
+                .append("detailsContains", detailsContains)
+                .append("contingencyPlanningIsEmpty", contingencyPlanningIsEmpty)
+                .append("mitigationStrategyContains", mitigationStrategyContains)
+                .append("mitigationStrategyIsEmpty", mitigationStrategyIsEmpty)
+                .toString();
+    }
 }

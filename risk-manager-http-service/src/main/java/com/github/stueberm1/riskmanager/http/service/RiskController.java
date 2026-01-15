@@ -50,12 +50,12 @@ public class RiskController {
 
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CollectionModel<RiskJson>> getRisks(@RequestParam("severity") Severity severity,
-                                                              @RequestParam("probabilityOfOccurrence") ProbabilityOfOccurrence probabilityOfOccurrence,
-                                                              @RequestParam("description") String description,
-                                                              @RequestParam("details") String details,
-                                                              @RequestParam("contingencyPlanning") String contingencyPlanning,
-                                                              @RequestParam("mitigationStrategy") String mitigationStrategy) {
+    public ResponseEntity<CollectionModel<RiskJson>> getRisks(@RequestParam(value = "severity", required = false) Severity severity,
+                                                              @RequestParam(value = "probabilityOfOccurrence", required = false) ProbabilityOfOccurrence probabilityOfOccurrence,
+                                                              @RequestParam(value = "description", required = false) String description,
+                                                              @RequestParam(value = "details", required = false) String details,
+                                                              @RequestParam(value = "contingencyPlanning", required = false) String contingencyPlanning,
+                                                              @RequestParam(value = "mitigationStrategy",required = false) String mitigationStrategy) {
         QueryParameterEvaluator queryParameterEvaluator = QueryParameterEvaluator.builder()
                 .severity(severity)
                 .probabilityOfOccurrence(probabilityOfOccurrence)
@@ -63,16 +63,10 @@ public class RiskController {
                 .details(details)
                 .contingencyPlanning(contingencyPlanning)
                 .mitigationStrategy(mitigationStrategy)
+                .riskService(riskService)
                 .build();
-        if (queryParameterEvaluator.isAnyQueryParameterSet()) {
-            return convertToHttpModel(queryParameterEvaluator.performListRequest(), riskConverter);
-        }
 
-        return convertToHttpModel(riskService.listAll(), riskConverter);
-    }
-
-    private static ResponseEntity<CollectionModel<RiskJson>> convertToHttpModel(List<RiskTO> risks, RiskModelConverter riskConverter) {
-        CollectionModel<RiskJson> response = CollectionModel.of(risks
+        CollectionModel<RiskJson> response = CollectionModel.of(queryParameterEvaluator.performListRequest()
                 .stream().filter(Objects::nonNull).map(riskConverter::convertToHttpModel).toList());
         return ResponseEntity.ok(response);
     }

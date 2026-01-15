@@ -21,7 +21,7 @@ public class QueryParameterEvaluator {
     private final String mitigationStrategy;
     private final RiskService riskService;
 
-    public boolean isAnyQueryParameterSet() {
+    private boolean isAnyQueryParameterSet() {
         return nonNull(severity) ||
                 nonNull(probabilityOfOccurrence) ||
                 nonNull(description) ||
@@ -31,18 +31,21 @@ public class QueryParameterEvaluator {
     }
 
     public List<RiskTO> performListRequest() {
-        return specifyMitigationStrategy(
-                specifyContingencyPlanningFilter(
-                        specifyDetailsFilter(specifyDescriptionFilter(
-                                specifyProbabilityOfOccurrenceFilter(
-                                        specifySeverityFilter(
-                                                riskService.listFilteredWith().severity()
-                                        )
-                                )
-                                )
-                        )
-                )
-        ).toList();
+        if (isAnyQueryParameterSet()) {
+            return specifyMitigationStrategy(
+                    specifyContingencyPlanningFilter(
+                            specifyDetailsFilter(specifyDescriptionFilter(
+                                            specifyProbabilityOfOccurrenceFilter(
+                                                    specifySeverityFilter(
+                                                            riskService.listFilteredWith().severity()
+                                                    )
+                                            )
+                                    )
+                            )
+                    )
+            ).toList();
+        }
+        return riskService.listAll();
     }
 
     private FilterProbabilityOfOccurrenceStep specifySeverityFilter(SeverityFilterSpec severityFilterSpec) {
