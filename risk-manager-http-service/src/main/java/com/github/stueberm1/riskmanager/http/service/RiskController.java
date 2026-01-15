@@ -5,9 +5,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
+import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
 import com.github.stueberm1.riskmanager.http.model.patch.JsonPatch;
+import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
+import com.github.stueberm1.riskmanager.types.risk.Severity;
 import com.github.stueberm1.riskmanager.types.risk.SimpleNumericRiskIdentifier;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
@@ -16,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -46,8 +50,23 @@ public class RiskController {
 
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CollectionModel<RiskJson>> getRisks() {
-        CollectionModel<RiskJson> response = CollectionModel.of(riskService.listAll()
+    public ResponseEntity<CollectionModel<RiskJson>> getRisks(@RequestParam(value = "severity", required = false) Severity severity,
+                                                              @RequestParam(value = "probabilityOfOccurrence", required = false) ProbabilityOfOccurrence probabilityOfOccurrence,
+                                                              @RequestParam(value = "description", required = false) String description,
+                                                              @RequestParam(value = "details", required = false) String details,
+                                                              @RequestParam(value = "contingencyPlanning", required = false) String contingencyPlanning,
+                                                              @RequestParam(value = "mitigationStrategy",required = false) String mitigationStrategy) {
+        QueryParameterEvaluator queryParameterEvaluator = QueryParameterEvaluator.builder()
+                .severity(severity)
+                .probabilityOfOccurrence(probabilityOfOccurrence)
+                .description(description)
+                .details(details)
+                .contingencyPlanning(contingencyPlanning)
+                .mitigationStrategy(mitigationStrategy)
+                .riskService(riskService)
+                .build();
+
+        CollectionModel<RiskJson> response = CollectionModel.of(queryParameterEvaluator.performListRequest()
                 .stream().filter(Objects::nonNull).map(riskConverter::convertToHttpModel).toList());
         return ResponseEntity.ok(response);
     }
