@@ -1,0 +1,34 @@
+name: risk-manager-service
+
+services:
+
+  risk-repository:
+    image: postgres:18-trixie
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: risk-manager
+      PGDATA: /var/lib/poatgresql/data/pgdat
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data/pgdat
+  risk-manager:
+    build: .
+    restart: no
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://risk-repository/risk-manager
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: '*'
+      SPRING_FLYWAY_URL: jdbc:postgresql://risk-repository/risk-manager
+      SPRING_FLYWAY_PASSWORD: postgres
+      SPRING_FLYWAY_USER: postgres
+
+volumes:
+  db-data:
+    name: postgres-data
+    driver: local
