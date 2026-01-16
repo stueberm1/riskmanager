@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXIST risk_data (
+CREATE TABLE IF NOT EXISTS risk_data (
     risk_id                     VARCHAR(30)     NOT NULL    PRIMARY KEY,
     severity                    VARCHAR(15)     NOT NULL,
     probability_of_occurence    VARCHAR(15)     NOT NULL,

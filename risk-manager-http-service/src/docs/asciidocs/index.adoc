@@ -1,0 +1,15 @@
+= risk-manager http-API
+:numbered:
+
+== Get Risks
+
+include::{snippets}/get-list/http-request.adoc[]
+
+include::{snippets}/get-list/http-response.adoc[]
+include::{snippets}/get-list/response-body.adoc[]
+
+== Post Risks
+
+include::{snippets}/post-risk/request-body.adoc[]
+
+include::{snippets}/post-risk/http-response.adoc[]

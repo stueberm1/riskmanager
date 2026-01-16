@@ -31,12 +31,12 @@ public class RiskController {
 
     private final RiskModelConverter riskConverter;
 
-    private final RiskPatchFactory riskPatchFactory;
+    private final RiskPatchFactory riskJsonPatchFactory;
 
-    public RiskController(RiskService riskService, RiskModelConverter converter, RiskPatchFactory riskPatchFactory) {
+    public RiskController(RiskService riskService, RiskModelConverter converter, RiskPatchFactory riskJsonPatchFactory) {
         this.riskService = riskService;
         this.riskConverter = converter;
-        this.riskPatchFactory = riskPatchFactory;
+        this.riskJsonPatchFactory = riskJsonPatchFactory;
     }
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -93,7 +93,7 @@ public class RiskController {
     @PatchMapping(path = "/{riskIdentifier}", consumes = "application/json-patch+json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RiskJson> patchRisk(@PathVariable("riskIdentifier") Long riskIdentifier, @RequestBody JsonPatch jsonPatch) {
         RiskIdentifier id = SimpleNumericRiskIdentifier.builder().withCurrentNumber(riskIdentifier).build();
-        RiskPatchTO riskPatchTO = riskPatchFactory.createPatch(id, jsonPatch);
+        RiskPatchTO riskPatchTO = riskJsonPatchFactory.createPatch(id, jsonPatch);
         return ResponseEntity.ok().body(riskConverter.convertToHttpModel(riskService.updateRisk(riskPatchTO)));
     }
 }

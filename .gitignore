@@ -38,3 +38,6 @@ build/
 /documentation/**/*.html
 /documentation/**/*.pdf
 /documentation/**/*.docx
+
+*.log
+**/*.log

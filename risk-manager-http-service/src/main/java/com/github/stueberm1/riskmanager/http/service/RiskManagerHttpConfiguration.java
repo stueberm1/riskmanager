@@ -16,7 +16,7 @@ public class RiskManagerHttpConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public RiskPatchFactory riskPatchFactory() {
+    public RiskPatchFactory riskJsonPatchFactory() {
         return new JsonPatchOperationProcessingRiskPatchFactory();
     }
 }
