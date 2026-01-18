@@ -1,0 +1,8 @@
+= invalid-id-number
+
+== Description
+
+The id number assigned to a specific risk is zero or less
+
+== Recommendation for resolving the problem
+This is mostly an issue with the algorithm creating the next number. Check and fix the algorithm.

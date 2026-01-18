@@ -4,6 +4,7 @@ import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -19,6 +20,8 @@ public class RiskJson extends RepresentationModel<RiskJson> {
     @NotBlank
     @Size(min = 10, max = 50)
     private String description;
+    @NotNull
+    @NotBlank
     private String details;
     private String contingencyPlanning;
     private String mitigationStrategy;

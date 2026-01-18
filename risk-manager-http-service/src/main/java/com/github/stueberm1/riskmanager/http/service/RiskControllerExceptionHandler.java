@@ -7,9 +7,9 @@ import com.github.stueberm1.riskmanager.core.in.risk.RiskNotFoundException;
 import com.github.stueberm1.riskmanager.http.model.ErrorDetail;
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
-import com.github.stueberm1.riskmanager.http.model.patch.IllegalValueModificationRequestException;
-import com.github.stueberm1.riskmanager.http.model.patch.InvalidJsonPointerException;
-import com.github.stueberm1.riskmanager.http.model.patch.UnsupportedJsonPatchOperationException;
+import com.github.stueberm1.riskmanager.http.patch.IllegalValueModificationRequestException;
+import com.github.stueberm1.riskmanager.http.patch.InvalidJsonPointerException;
+import com.github.stueberm1.riskmanager.http.patch.UnsupportedJsonPatchOperationException;
 import com.github.stueberm1.riskmanager.types.risk.EntityConstraintViolationException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalIdNumberException;
 import com.github.stueberm1.riskmanager.types.risk.IllegalRiskIdentifierException;
@@ -179,9 +179,9 @@ public class RiskControllerExceptionHandler {
 
     private static ProblemDetails convertTo(UnsupportedJsonPatchOperationException ex) {
         ProblemDetails problemDetails = new ProblemDetails();
-        problemDetails.setType(problemTypeFactory("invalid-json-patch-operation"));
+        problemDetails.setType(problemTypeFactory("illegal-json-patch-operation"));
         problemDetails.setStatus(HttpStatus.BAD_REQUEST.value());
-        problemDetails.setTitle("Invalid JSON Patch Operation");
+        problemDetails.setTitle("Illegal JSON Patch Operation");
         problemDetails.setDetail(format("Json-Patch %s is not supported. Reason: %s", ex.getOperationName(), ex.getMessage()));
         return  problemDetails;
     }

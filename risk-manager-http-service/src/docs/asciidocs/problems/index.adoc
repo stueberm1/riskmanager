@@ -1,0 +1,11 @@
+= Problem-types catalog
+
+. xref:duplicate-identifier/index.adoc[/docs/problems/duplicate-identifier]
+. xref:identifier-mismatch/index.adoc[/docs/problems/identifier-mismatch]
+. xref:illegal-json-patch-operation/index.adoc[/docs/problems/illegal-json-patch-operation]
+. xref:illegal-value-modification/index.adoc[/docs/problems/illegal-value-modification]
+. xref:invalid-id-number/index.adoc[/docs/problems/invalid-id-number]
+. xref:invalid-identifier/index.adoc[/docs/problems/invalid-identifier]
+. xref:invalid-json-pointer/index.adoc[/docs/problems/invalid-json-pointer]
+. xref:invalid-risk-arguments/index.adoc[/docs/problems/invalid-risk-arguments]
+. xref:risk-not-found/index.adoc[/docs/problems/risk-not-found]

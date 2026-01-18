@@ -1,11 +1,10 @@
-package com.github.stueberm1.riskmanager.http.model.patch;
+package com.github.stueberm1.riskmanager.http.patch;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.JsonPointerDeserializer;
-import com.github.stueberm1.riskmanager.http.patch.RiskPatchBuilder;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 @JsonTypeName(RemoveOperation.OPERATION_NAME)

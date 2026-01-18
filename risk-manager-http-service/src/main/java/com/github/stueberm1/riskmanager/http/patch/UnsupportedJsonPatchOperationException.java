@@ -1,4 +1,4 @@
-package com.github.stueberm1.riskmanager.http.model.patch;
+package com.github.stueberm1.riskmanager.http.patch;
 import static java.util.Objects.requireNonNull;
 import com.github.stueberm1.riskmanager.types.RiskManagerException;
 

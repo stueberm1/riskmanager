@@ -1,15 +1,174 @@
-= risk-manager http-API
+= /api/v1
 :numbered:
+:imagesdir: ./images
+:toc: left
+:toclevels: 5
+:stem: latexmath
 
-== Get Risks
+== Overview
 
+.Overview of resources and paths
+image::ressource-overview.drawio.png[rest-ressources]
+
+.image create and update process
+image::workflow.drawio.png[risk modifications]
+
+== Resources
+
+[[model-risk-json]]
+=== /risk
+
+.Description of the risk
+[cols="2a,1, 1a,2" options="header"]
+|===
+|Property                   | Type      |Constraints                                        | Description
+|__id__                     |number     |integer; stem:[id > 0]                             | Unique identifier of a risk defined by the api-client. It **must** be an integer value greater then zero and __should__ be a number from a sequence.
+|__severity__               |string     |enum; not null                                     | Abstract severity if the the risk becomes a problem.
+|__probabilityOfOccurrence__|string     |enum; not null                                     | Abstract probability the risk becomes a problem
+|__description__            |string     |not null; stem:[10 <= description.length() <= 50]  | Short description of the risk
+|__details__                |string     |not null; stem:[description.length() > 0]          | Details of the risk, so that all project stakeholders can understand and assess the risk.
+|__contingencyPlanning__    |string     | optional                                          | If available, a plan what to do, if the risk becomes a problem
+|__mitigationStrategy__     |string     |optional                                           | If available, some Ideas to reduce the probability the risk becomes a problem
+|===
+
+[[get-risks]]
+==== +GET /risk+
+Lists up all created risks.
+
+.http request
 include::{snippets}/get-list/http-request.adoc[]
 
+.example request with curl
+include::{snippets}/get-list/curl-request.adoc[]
+
+Since there can be many risks in a software project, the GET operation accepts query-parameter.
+
+NOTE:   The properties `mitigationStrategy` and `contingencyPlanning` are optional in the model. To find risks, where one
+        or both of these properties are not set yet, the query-parameters accepting a special value `isEmpty()`
+
+.http request with filter arguments
+include::{snippets}/get-list-with-filter/http-request.adoc[]
+
+.curl example with filter
+include::{snippets}/get-list-with-filter/curl-request.adoc[]
+
+
+200:: Get risk responds with a status code 200. If available the response body contains the list of risks.
+
+.example response
 include::{snippets}/get-list/http-response.adoc[]
-include::{snippets}/get-list/response-body.adoc[]
 
-== Post Risks
+[[post-risk]]
+==== +POST /risk+
 
-include::{snippets}/post-risk/request-body.adoc[]
+Creates a new risk with a POST request.
 
+.http request
+include::{snippets}/post-risk/http-request.adoc[]
+
+.example request with curl
+include::{snippets}/post-risk/curl-request.adoc[]
+
+200:: If the operation is successful, the service response with status code 200 and the response body contains the created
+risk.
+
+.success response
 include::{snippets}/post-risk/http-response.adoc[]
+
+400:: If the risk identifier does not match the <<model-risk-json, constraints>> the service response with status code 400
+
+.bad request response
+include::{snippets}/post-request-invalid-id/http-response.adoc[]
+
+409:: The POST-Operation is defined as not being idempotent in HTTP, so the system would create a new risk, with same content. The system responds to such a situation with a conflict (status code 409).
+
+.conflict response
+include::{snippets}/conflict-post-risk-request/http-response.adoc[]
+
+422:: The Response-Body violates one or more constraint
+
+.example constraint violation
+include::{snippets}/post-request-constraint-violation/http-response.adoc[]
+
+[[put-risk]]
+==== +PUT /risk/{riskIdentifier}+
+
+Creates a new request using the a PUT operation.
+
+include::{snippets}/put-risk/path-parameters.adoc[]
+
+.example http-request
+include::{snippets}/put-risk/http-request.adoc[]
+
+.curl example
+include::{snippets}/put-risk/curl-request.adoc[]
+
+200:: success
+.success example
+include::{snippets}/put-risk/http-response.adoc[]
+
+409:: Conflict
+
+422:: constraint violation
+include::{snippets}/put-risk-invalid-risk-arguments/http-response.adoc[]
+include::{snippets}/put-constraint-violation-problem/http-response.adoc[]
+
+==== +GET /risk/{riskIdentifier}+
+
+include::{snippets}/get-risk/path-parameters.adoc[]
+
+include::{snippets}/get-risk/http-request.adoc[]
+include::{snippets}/get-risk/curl-request.adoc[]
+
+200:: Success
+
+include::{snippets}/get-risk/http-response.adoc[]
+
+404:: Not found
+include::{snippets}/get-risk-failed/http-response.adoc[]
+
+==== +PATCH /risk/{riskIdentifier}+
+
+Updates parts of a description
+
+include::{snippets}/patch-risk-add-value/http-request.adoc[]
+include::{snippets}/patch-risk-replace-value/http-request.adoc[]
+
+200:: Success
+include::{snippets}/patch-risk-add-value/http-response.adoc[]
+
+400:: Bad Request
+include::{snippets}/patch-risk-illegal-argument-modification/http-response.adoc[]
+
+include::{snippets}/patch-risk-illegal-patch-operation/http-response.adoc[]
+
+include::{snippets}/patch-risk-invalid-pointer/http-response.adoc[]
+
+
+[[model-json-patch]]
+=== JsonPatch
+
+The `JsonPatch` describes partial modifications on a <<model-risk-json, `RiskJson`>> as defined in https://datatracker.ietf.org/doc/html/rfc6902[RFC 6902].
+
+see https://jsonpatch.com/
+
+[[model-problem-details]]
+=== ProblemDetails
+
+In case of exceptions in processing of <<model-risk-json, risks>> the problem details the problem details contains
+more specific details about the problem then having only the http status codes as described in https://www.rfc-editor.org/rfc/rfc9457.html[RFC 9547].
+
+The details allows clients to handle and fix the problem.
+
+The api extends the default elements with additional with a n optional list of Error details. This allows to point to describe
+the problem down to single attributes.
+
+.Description of the ErrorDetails
+[cols="1a, 2" options="header"]
+|===
+| Property      | Description
+|__details__    | Details on the constraint that caused the problem
+|__pointer__    | A JsonPointer as specified in https://datatracker.ietf.org/doc/html/rfc6901[RFC 6901] pointing to the attribute that caused the problem.
+|===
+
+The types used for presenting problem details are documented in the xref:problems/index.adoc[Problem-types catalog].

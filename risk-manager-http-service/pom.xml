@@ -82,6 +82,7 @@
                         <configuration>
                             <backend>html</backend>
                             <doctype>book</doctype>
+                            <preserveDirectories>true</preserveDirectories>
                             <attributes>
                                 <snippets>${snippetsDirectory}</snippets>
                             </attributes>

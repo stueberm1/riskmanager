@@ -1,0 +1,7 @@
+= invalid-json-pointer
+
+== Description
+
+
+
+== Recommendation for resolving the problem

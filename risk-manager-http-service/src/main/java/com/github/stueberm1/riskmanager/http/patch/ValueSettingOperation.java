@@ -1,7 +1,6 @@
-package com.github.stueberm1.riskmanager.http.model.patch;
+package com.github.stueberm1.riskmanager.http.patch;
 
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
-import com.github.stueberm1.riskmanager.http.patch.RiskPatchBuilder;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
 

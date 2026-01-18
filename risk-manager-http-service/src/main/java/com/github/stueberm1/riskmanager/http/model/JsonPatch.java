@@ -1,6 +1,7 @@
-package com.github.stueberm1.riskmanager.http.model.patch;
+package com.github.stueberm1.riskmanager.http.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.github.stueberm1.riskmanager.http.patch.JsonPatchOperation;
 import com.github.stueberm1.riskmanager.http.patch.RiskPatchBuilder;
 
 /// Type mapping of a Json-Patch structure as defined in [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)
