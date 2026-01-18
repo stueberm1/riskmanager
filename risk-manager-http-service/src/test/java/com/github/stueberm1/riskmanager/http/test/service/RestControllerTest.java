@@ -2,9 +2,10 @@ package com.github.stueberm1.riskmanager.http.test.service;
 
 import com.github.stueberm1.riskmanager.core.in.risk.*;
 import com.github.stueberm1.riskmanager.core.in.risk.filter.FilterSpec;
+import com.github.stueberm1.riskmanager.http.model.JsonPatch;
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
-import com.github.stueberm1.riskmanager.http.model.patch.*;
+import com.github.stueberm1.riskmanager.http.patch.*;
 import com.github.stueberm1.riskmanager.http.service.RiskController;
 import com.github.stueberm1.riskmanager.http.service.RiskControllerExceptionHandler;
 import com.github.stueberm1.riskmanager.http.service.RiskManagerHttpConfiguration;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.restdocs.test.autoconfigure.AutoConfigureRestDocs;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -31,6 +33,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
+import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -107,11 +110,12 @@ class RestControllerTest {
             );
         }
 
-        @Test
-        void aNegativeIdNumberLeadsIntoBadRequest() throws Exception {
+        @ParameterizedTest
+        @ValueSource(ints = {-1, 0} )
+        void aNegativeIdNumberLeadsIntoBadRequest(int idNumber) throws Exception {
             doNothing().when(riskService).createRisk(any());
 
-            Map<String, Object> map = Map.of("id", "-1", "description", DESCRIPTION, "details", DETAILS,
+            Map<String, Object> map = Map.of("id", String.valueOf(idNumber), "description", DESCRIPTION, "details", DETAILS,
                     "severity", Severity.MEDIUM, "probabilityOfOccurrence", ProbabilityOfOccurrence.MEDIUM);
             // when
             final String requestAsString = OBJECT_MAPPER.writeValueAsString(map);
@@ -121,9 +125,25 @@ class RestControllerTest {
                     .andExpect(jsonPath("$.type").value("invalid-id-number"))
                     .andExpect(jsonPath("$.status").value("400"))
                     .andExpect(jsonPath("$.title").value("Id number of an RiskIdentifier must be a positive integer"))
-                    .andExpect(jsonPath("$.detail").value("ID must be greater than zero, but was -1"))
-                    .andExpect(jsonPath("$.instance").value("http://localhost:8080/api/v1/risk/-1"))
-                    .andDo(document("bad-post-risk-request"));
+                    .andExpect(jsonPath("$.detail").value("ID must be greater than zero, but was " + idNumber))
+                    .andExpect(jsonPath("$.instance").value("http://localhost:8080/api/v1/risk/" + idNumber))
+                    .andDo(document("post-request-invalid-id"));
+        }
+
+        @Test
+        void requestConstraintViolations() throws Exception {
+            doNothing().when(riskService).createRisk(any());
+
+            Map<String, Object> map = Map.of("id", "1", "description", "too short", "details", DETAILS,
+                     "probabilityOfOccurrence", ProbabilityOfOccurrence.MEDIUM);
+            // when
+            final String requestAsString = OBJECT_MAPPER.writeValueAsString(map);
+            mockMvc.perform(post(API_BASE).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
+                    .andExpect(status().isUnprocessableContent())
+                    .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
+                    .andExpect(jsonPath("$.type").value("invalid-risk-arguments"))
+                    .andExpect(jsonPath("$.status").value("422"))
+                    .andDo(document("post-request-constraint-violation"));
         }
 
         @Test
@@ -177,7 +197,8 @@ class RestControllerTest {
                     .param("contingencyPlanning", "isEmpty()")
                     .param("mitigationStrategy", "praying")
             ).andExpect(status().isOk())
-             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andDo(document("get-list-with-filter"));
 
             then(riskService).should(times(1)).listFilteredWith();
             then(riskService).shouldHaveNoMoreInteractions();
@@ -225,7 +246,7 @@ class RestControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                     .andExpect(jsonPath("$.id").value(TEST_ID.id()))
                     .andExpect(jsonPath("$._links.self.href").value("http://localhost:8080/api/v1/risk/1"))
-                    .andDo(document("post-risk", pathParameters(parameterWithName("riskIdentifier").description("Unique identifier of a risk"))));
+                    .andDo(document("put-risk", pathParameters(parameterWithName("riskIdentifier").description("Unique identifier of a risk"))));
 
             then(riskService).should(times(1)).createRisk(new RiskTO(SimpleNumericRiskIdentifier.builder()
                     .withCurrentNumber(1)
@@ -294,7 +315,7 @@ class RestControllerTest {
                     .andExpect(jsonPath("$.errors.length()").value(1))
                     .andExpect(jsonPath("$.errors[0].detail").value("description too long"))
                     .andExpect(jsonPath("$.errors[0].pointer").value("#/description"))
-                    .andDo(document("constraint-violation-problem"));
+                    .andDo(document("put-constraint-violation-problem"));
         }
     }
 
@@ -430,9 +451,9 @@ class RestControllerTest {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("invalid-json-patch-operation"))
+                    .andExpect(jsonPath("$.type").value("illegal-json-patch-operation"))
                     .andExpect(jsonPath("$.status").value("400"))
-                    .andExpect(jsonPath("$.title").value("Invalid JSON Patch Operation"))
+                    .andExpect(jsonPath("$.title").value("Illegal JSON Patch Operation"))
                     .andExpect(jsonPath("$.detail").value(expectedDetail))
                     .andDo(document("patch-risk-illegal-patch-operation"));
         }

@@ -1,13 +1,11 @@
-package com.github.stueberm1.riskmanager.http.model.patch;
+package com.github.stueberm1.riskmanager.http.patch;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.http.model.JsonPointer;
 import com.github.stueberm1.riskmanager.http.model.JsonPointerSerializer;
-import com.github.stueberm1.riskmanager.http.patch.RiskPatchBuilder;
 import tools.jackson.databind.annotation.JsonSerialize;
 
 @JsonTypeInfo(

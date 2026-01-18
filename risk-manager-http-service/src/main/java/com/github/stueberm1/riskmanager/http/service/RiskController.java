@@ -5,9 +5,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
-import com.github.stueberm1.riskmanager.core.in.risk.RiskTO;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
-import com.github.stueberm1.riskmanager.http.model.patch.JsonPatch;
+import com.github.stueberm1.riskmanager.http.model.JsonPatch;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -78,9 +76,11 @@ public class RiskController {
             throw new RiskIdentifierMisMatchException(riskIdentifier, riskJson.getId());
         }
 
+        riskJson.setId(riskIdentifier);
         riskService.createRisk(riskConverter.convertToRiskModel(riskJson));
         Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskIdentifier)).withSelfRel();
-        riskJson.add(selfLink);
+        Link riskListLink = linkTo(RiskController.class).withRel("risk-list");
+        riskJson.add(selfLink, riskListLink);
         return ResponseEntity.ok().body(riskJson);
     }
 
