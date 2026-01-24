@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.ObjectMapper;
 
 import javax.swing.*;
@@ -78,6 +79,7 @@ class RestControllerTest {
 
     private static final String API_BASE = "/api/v1/risk";
 
+
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
@@ -122,7 +124,7 @@ class RestControllerTest {
             mockMvc.perform(post(API_BASE).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("invalid-id-number"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("invalid-id-number")))
                     .andExpect(jsonPath("$.status").value("400"))
                     .andExpect(jsonPath("$.title").value("Id number of an RiskIdentifier must be a positive integer"))
                     .andExpect(jsonPath("$.detail").value("ID must be greater than zero, but was " + idNumber))
@@ -141,7 +143,7 @@ class RestControllerTest {
             mockMvc.perform(post(API_BASE).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
                     .andExpect(status().isUnprocessableContent())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("invalid-risk-arguments"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("invalid-risk-arguments")))
                     .andExpect(jsonPath("$.status").value("422"))
                     .andDo(document("post-request-constraint-violation"));
         }
@@ -157,7 +159,7 @@ class RestControllerTest {
             mockMvc.perform(post(API_BASE).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
                     .andExpect(status().isConflict())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("duplicate-identifier"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("duplicate-identifier")))
                     .andExpect(jsonPath("$.status").value("409"))
                     .andExpect(jsonPath("$.title").value("duplicated identifier"))
                     .andExpect(jsonPath("$.detail")
@@ -165,6 +167,11 @@ class RestControllerTest {
                     .andExpect(jsonPath("$.instance").value("http://localhost:8080/api/v1/risk/1"))
                     .andDo(document("conflict-post-risk-request"));
         }
+    }
+
+    private static final String PROBLEMS_BASE = "http://localhost:8080/docs/problems/";
+    private static String resolveToProblemUriString(String problemIdentifier) {
+        return  UriComponentsBuilder.fromUriString(PROBLEMS_BASE).path(problemIdentifier).toUriString();
     }
 
     @Nested
@@ -265,7 +272,7 @@ class RestControllerTest {
             mockMvc.perform(put(RESOURCE_URI, 2L).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
                     .andExpect(status().isUnprocessableContent())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("identifier-mismatch"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("identifier-mismatch")))
                     .andExpect(jsonPath("$.status").value("422"))
                     .andExpect(jsonPath("$.title").value("Object id do not match the request path"))
                     .andExpect(jsonPath("$.detail")
@@ -291,7 +298,7 @@ class RestControllerTest {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isUnprocessableContent())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("invalid-risk-arguments"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("invalid-risk-arguments")))
                     .andExpect(jsonPath("$.status").value("422"))
                     .andDo(document("put-risk-invalid-risk-arguments"));
         }
@@ -309,7 +316,7 @@ class RestControllerTest {
             mockMvc.perform(put(RESOURCE_URI, TEST_ID.id()).contentType(MediaType.APPLICATION_JSON).content(requestAsString))
                     .andExpect(status().isUnprocessableContent())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("invalid-risk-arguments"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("invalid-risk-arguments")))
                     .andExpect(jsonPath("$.status").value("422"))
                     .andExpect(jsonPath("$.title").value("Some arguments of the risk are invalid."))
                     .andExpect(jsonPath("$.errors.length()").value(1))
@@ -318,6 +325,7 @@ class RestControllerTest {
                     .andDo(document("put-constraint-violation-problem"));
         }
     }
+
 
     @Nested
     class GetRisk {
@@ -364,7 +372,7 @@ class RestControllerTest {
             mockMvc.perform(get(RESOURCE_URI, 1L))
                     .andExpect(status().isNotFound())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("risk-not-found"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("risk-not-found")))
                     .andExpect(jsonPath("$.status").value("404"))
                     .andExpect(jsonPath("$.title").value("The requested risk was not found."))
                     .andExpect(jsonPath("$.detail").value("The identifier 1 does not exist."))
@@ -427,7 +435,7 @@ class RestControllerTest {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("invalid-json-pointer"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("invalid-json-pointer")))
                     .andExpect(jsonPath("$.status").value("400"))
                     .andExpect(jsonPath("$.title").value("Invalid JSON Pointer"))
                     .andExpect(jsonPath("$.detail").value("The JSON Pointer /unknown points to a non-existing property."))
@@ -451,7 +459,7 @@ class RestControllerTest {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("illegal-json-patch-operation"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("illegal-json-patch-operation")))
                     .andExpect(jsonPath("$.status").value("400"))
                     .andExpect(jsonPath("$.title").value("Illegal JSON Patch Operation"))
                     .andExpect(jsonPath("$.detail").value(expectedDetail))
@@ -471,7 +479,7 @@ class RestControllerTest {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE))
-                    .andExpect(jsonPath("$.type").value("illegal-value-modification"))
+                    .andExpect(jsonPath("$.type").value(resolveToProblemUriString("illegal-value-modification")))
                     .andExpect(jsonPath("$.status").value("400"))
                     .andExpect(jsonPath("$.title").value("Illegal value modification"))
                     .andExpect(jsonPath("$.instance").value("http://localhost:8080/api/v1/risk/1"))
