@@ -1,0 +1,12 @@
+= identifier-mismatch
+
+== Description
+
+The client tried to create a risk-resource using PUT-operation, where the resource and the
+risk-path have different numbers for the risk.
+
+The service cannot determine, which one is the correct one and rejects the request
+
+== Recommendation for resolving the problem
+
+The client must check the request and either remove the identifier from the request-body or must ensure, both values are identical.

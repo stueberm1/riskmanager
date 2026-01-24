@@ -1,0 +1,9 @@
+= risk-not-found
+
+== Description
+
+Client tries to create a risk with missing mandatory fields or some of the values provided with the request does violate a business constraint.
+
+== Recommendation for resolving the problem
+
+Clients must fix the constraint violations described in the problem details

@@ -1,0 +1,9 @@
+= invalid-json-pointer
+
+== Description
+
+The json-pointer in a PATCH-request does not points to an existing field in a resource or is syntactically invalid
+
+== Recommendation for resolving the problem
+
+Clients must check the pointer syntax and target. The problem details might provide additional information.

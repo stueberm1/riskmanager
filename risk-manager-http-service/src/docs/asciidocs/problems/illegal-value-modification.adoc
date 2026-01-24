@@ -1,0 +1,12 @@
+= illegal-value-modification
+
+== Description
+
+Client tries to change the value of a property which is defined as immutable (e.g. description or id). Since the value has an immutable-constraint, the service rejects
+the request to keep consistency.
+
+== Recommendation for resolving the problem
+
+If the operation is really required, the client **must** request a feature request to
+allow the operation. Because such a feature-request affects existing constraints,
+such a feature request needs a architectural evaluation and planning.
