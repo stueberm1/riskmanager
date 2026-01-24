@@ -1,0 +1,12 @@
+= illegal-json-patch-operation
+
+== Description
+
+The client tries to use a json-path-operation, which is not allowed because of business constraints. To keep the data- and systems consistency the system rejects the operation.
+
+
+== Recommendation for resolving the problem
+
+If the operation is really required, the client **must** request a feature request to
+allow the operation. Because such a feature-request affects existing constraints,
+such a feature request needs a architectural evaluation and planning.

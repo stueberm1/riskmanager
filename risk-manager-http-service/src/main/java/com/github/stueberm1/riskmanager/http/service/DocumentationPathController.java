@@ -17,6 +17,6 @@ public class DocumentationPathController {
     public String getApiDoc() {
 
         logger.info("getApiDoc");
-        return "docs/index";
+        return "docs/index.html";
     }
 }

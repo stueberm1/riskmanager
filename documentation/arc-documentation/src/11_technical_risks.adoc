@@ -6,8 +6,29 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Spring-Hateoas does not work with generated api-code
 
+
 https://github.com/OpenAPITools/openapi-generator/issues/13552
 https://github.com/spring-projects/spring-hateoas/issues/1855
 
 Mitigation Strategy::
 We use a code-first approach using openapi-Annotations instead of writing the openapi-file and generating service stubs from that (contract first). This approach requires to expose the swagger-ui and openapi-endpoint, so clients can get the generated api-description to generate client code from it.
+
+
+=== No (web-)UI capabilities in Project
+
+Due to a lack of frontend capabilities in the project, it may be difficult to implement a sleek, modern web interface for human-machine interaction in the risk manager.
+
+This could limit or even prevent the service from being usable.
+
+Severity:: Medium
+
+Probability of occurrence:: Very High
+
+Contingency planning:: We use a java based server side rendering engine to create very simple ui without any great styling
+options. Those can be added later or the ui gets replaced. This will be enabled by setting it up on the rest api, so it can be
+replaced by any technology without loosing functionality. That may not be pretty, but it allows an easy usage of the tool
+without forcing users to format their risks in JSON and upload them via the REST API
+
+Mitigation Strategy:: The REST-Api gets assisting to the static api-documentation a swagger-ui description, so we can quite easy
+interact with the application until we are able to create the frontend. Also we do prioritize the excel-export functionality,
+so also non-techs can work with the risks

@@ -1,0 +1,10 @@
+= duplicate-identifier
+
+== Description
+
+The client tried to create a risk with an existing identifier, so the identifier would no longer being unique. The service rejects the request to keep the consistency.
+
+== Recommendation for resolving the problem
+
+Client must check the existing ids (e.g. by fetching existing risks and checking the IDs)
+and use an identifier (number) not being in the result-set.

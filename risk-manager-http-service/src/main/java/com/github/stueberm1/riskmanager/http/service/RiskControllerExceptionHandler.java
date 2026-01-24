@@ -48,7 +48,7 @@ public class RiskControllerExceptionHandler {
 
     private static URI problemTypeFactory(String typeIdentifier) {
 
-        return WebMvcLinkBuilder.linkTo(DocumentationPathController.class).slash("problems").slash(typeIdentifier).toUri();
+        return WebMvcLinkBuilder.linkTo(ProblemDescriptionsController.class).slash(typeIdentifier).toUri();
 
     }
 

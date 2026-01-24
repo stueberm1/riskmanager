@@ -1,0 +1,9 @@
+= invalid-risk-arguments
+
+== Description
+
+The requested risk is not available.
+
+== Recommendation for resolving the problem
+
+The client must check the request-path. An option to do this, is to fetch a list, either with a filter or the complete list, and check the IDs.

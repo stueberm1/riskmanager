@@ -1,0 +1,11 @@
+= invalid-identifier
+
+== Description
+
+The provided risk-identifier does not match a generic constraint. The problem details contains information of
+the constraint violation.
+
+== Recommendation for resolving the problem
+
+Clients must check the problem details response and fix the reported issue. Because this is a generic type, there
+is no more specific recommendation available.
