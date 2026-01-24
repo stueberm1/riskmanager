@@ -5,12 +5,18 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
+import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
 import com.github.stueberm1.riskmanager.http.model.JsonPatch;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
 import com.github.stueberm1.riskmanager.types.risk.SimpleNumericRiskIdentifier;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -37,6 +43,24 @@ public class RiskController {
         this.riskJsonPatchFactory = riskJsonPatchFactory;
     }
 
+    @Operation(summary = "Creates a new risk by a complete description in in JSON-format")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "The risk was created successful and can be read by the self-link provided by in the response object",
+                    content = {@Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RiskJson.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "400",
+                    description = "The Id, provided with the request body, does not meet the specification",
+                    content =  {@Content(
+                            mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemDetails.class)
+                    )}
+            )
+
+    })
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<RiskJson> createRisk(@Valid @RequestBody RiskJson riskJson) {
         riskService.createRisk(riskConverter.convertToRiskModel(riskJson));
