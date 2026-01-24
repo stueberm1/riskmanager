@@ -47,11 +47,9 @@ public class RiskControllerExceptionHandler {
     }
 
     private static URI problemTypeFactory(String typeIdentifier) {
-        try {
-            return UriComponentsBuilder.fromUriString(typeIdentifier).build().toUri();
-        } catch (InvalidUrlException e) {
-            throw new RuntimeException(e);
-        }
+
+        return WebMvcLinkBuilder.linkTo(DocumentationPathController.class).slash("problems").slash(typeIdentifier).toUri();
+
     }
 
     @ExceptionHandler(value = RiskIdentifierMisMatchException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
