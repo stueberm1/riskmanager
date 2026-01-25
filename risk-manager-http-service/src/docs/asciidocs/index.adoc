@@ -1,6 +1,6 @@
 = /api/v1
 :numbered:
-:imagesdir: ./images
+:imagesdir: images
 :toc: left
 :toclevels: 5
 :stem: latexmath
@@ -27,7 +27,7 @@ image::application-state.drawio.png[state-model]
 == Resources
 
 [[model-risk-json]]
-=== /risk
+=== rrisk
 
 .Description of the risk
 [cols="2a,1, 1a,2" options="header"]
