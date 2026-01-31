@@ -21,15 +21,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.util.InvalidUrlException;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
 @RestControllerAdvice
 public class RiskControllerExceptionHandler {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = IllegalIdNumberException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
     public ResponseEntity<ProblemDetails> handleIllegalIdNumberException(IllegalIdNumberException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
@@ -53,6 +53,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = RiskIdentifierMisMatchException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     public ResponseEntity<ProblemDetails> handleRiskIdentifierMisMatchException(RiskIdentifierMisMatchException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(convertTo(ex));
     }
@@ -70,6 +71,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = IllegalRiskIdentifierException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ProblemDetails> handleIllegalRiskIdentifierException(IllegalRiskIdentifierException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
     }
@@ -84,6 +86,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = EntityConstraintViolationException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     public ResponseEntity<ProblemDetails> handleEntityConstraintViolationException(EntityConstraintViolationException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(convertTo(ex));
     }
@@ -103,6 +106,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
     public ResponseEntity<ProblemDetails> handleConstraintViolationException(MethodArgumentNotValidException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(convertTo(ex));
     }
@@ -122,6 +126,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = RiskIdentifierAlreadyInUseException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ProblemDetails> handleRiskIdentifierAlreadyInUseException(RiskIdentifierAlreadyInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(convertTo(ex));
     }
@@ -138,6 +143,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = RiskNotFoundException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ProblemDetails> handleRiskNotFoundException(RiskNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(convertTo(ex));
     }
@@ -154,6 +160,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = InvalidJsonPointerException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ProblemDetails> handleInvalidJsonPointerException(InvalidJsonPointerException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
     }
@@ -171,6 +178,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = UnsupportedJsonPatchOperationException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ProblemDetails> handleUnsupportedJsonPatchOperationException(UnsupportedJsonPatchOperationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
     }
@@ -185,6 +193,7 @@ public class RiskControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = IllegalValueModificationRequestException.class, produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ProblemDetails> handleIllegalValueModificationRequestException(IllegalValueModificationRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(convertTo(ex));
     }

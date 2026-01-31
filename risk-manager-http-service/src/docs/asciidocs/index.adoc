@@ -1,22 +1,33 @@
 = /api/v1
 :numbered:
-:imagesdir: ./images
+:imagesdir: images
 :toc: left
 :toclevels: 5
 :stem: latexmath
 
 == Overview
 
+The Risk-Manager operates on `RiskJson` and provides a specified set of operations.
+
 .Overview of resources and paths
 image::ressource-overview.drawio.png[rest-ressources]
+
+For business requirements, the risk-manager **does not** provide any operation
+on the specified resource `RiskJson`. Restricted operations will lead into an exception/error to protect the system.
 
 .image create and update process
 image::workflow.drawio.png[risk modifications]
 
+The application provides a complete RESTful-API (instead of only being a REST-API) by instrumentalizing link:https://en.wikipedia.org/wiki/HATEOAS[HATEAOS]. Any operation of the api is only possible, if the application is in a specific state and if the specified guards are valid.
+The response of any operation contains links to the operation allowed in the next step.
+
+.State-model of the risk-manager
+image::application-state.drawio.png[state-model]
+
 == Resources
 
 [[model-risk-json]]
-=== /risk
+=== rrisk
 
 .Description of the risk
 [cols="2a,1, 1a,2" options="header"]

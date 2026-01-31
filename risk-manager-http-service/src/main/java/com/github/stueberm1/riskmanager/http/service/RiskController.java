@@ -1,18 +1,24 @@
 package com.github.stueberm1.riskmanager.http.service;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import com.github.stueberm1.riskmanager.core.in.risk.RiskPatchTO;
 import com.github.stueberm1.riskmanager.core.in.risk.RiskService;
+import com.github.stueberm1.riskmanager.http.model.ProblemDetails;
 import com.github.stueberm1.riskmanager.http.model.RiskJson;
 import com.github.stueberm1.riskmanager.http.model.JsonPatch;
 import com.github.stueberm1.riskmanager.types.risk.ProbabilityOfOccurrence;
 import com.github.stueberm1.riskmanager.types.risk.RiskIdentifier;
 import com.github.stueberm1.riskmanager.types.risk.Severity;
 import com.github.stueberm1.riskmanager.types.risk.SimpleNumericRiskIdentifier;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +26,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @RestController
 @RequestMapping("/api/v1/risk")
+@OpenAPIDefinition(
+        externalDocs = @ExternalDocumentation(
+                 url = "/docs/index.html",
+                description = "The detailed  static service description including workflow description."
+        )
+)
 public class RiskController {
 
 
@@ -37,12 +51,55 @@ public class RiskController {
         this.riskJsonPatchFactory = riskJsonPatchFactory;
     }
 
+    @Operation(summary = "Creates a new risk by a complete description in in JSON-format"
+            , requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                useParameterTypeSchema = true,
+            description = "Description of a new risk",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = RiskJson.class)
+            )
+    ))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "The risk was created successful and can be read by the self-link provided by in the response object",
+                    content = {@Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RiskJson.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "400",
+                    description = "The Id, provided with the request body, does not meet the specification",
+                    content =  {@Content(
+                            mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemDetails.class)
+                    )}
+            ),
+            @ApiResponse(responseCode = "409",
+            description = "The identifier provided in RequestBody is used by another object ",
+            content =  {@Content(
+                mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                    schema = @Schema(implementation = ProblemDetails.class)
+            )}),
+            @ApiResponse(responseCode = "422",
+                    description = "The Object in the RequestBody violates a constraint",
+                    content = {@Content(
+                            mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE,
+                            schema = @Schema(implementation = ProblemDetails.class)
+                    )}
+            )
+    })
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<RiskJson> createRisk(@Valid @RequestBody RiskJson riskJson) {
         riskService.createRisk(riskConverter.convertToRiskModel(riskJson));
 
         Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskJson.getId())).withSelfRel();
-        riskJson.add(selfLink);
+        Link apiDesc = Link.of("/v3/api-docs").withRel("service-desc");
+        Link apiDoc = linkTo(DocumentationPathController.class).withRel("service-doc");
+        Link editLink = linkTo(methodOn(RiskController.class).getRisk(riskJson.getId())).withRel(IanaLinkRelations.EDIT)
+                .andAffordance(afford(methodOn(RiskController.class).patchRisk(riskJson.getId(), null)));
+        Link riskListLink = linkTo(RiskController.class).withRel(IanaLinkRelations.COLLECTION);
+        riskJson.add(selfLink, apiDesc, apiDoc, editLink, riskListLink);
         return ResponseEntity.ok().body(riskJson);
     }
 
@@ -65,7 +122,12 @@ public class RiskController {
                 .build();
 
         CollectionModel<RiskJson> response = CollectionModel.of(queryParameterEvaluator.performListRequest()
-                .stream().filter(Objects::nonNull).map(riskConverter::convertToHttpModel).toList());
+                .stream().filter(Objects::nonNull).map(riskConverter::convertToHttpModel).toList()).add(
+            linkTo(methodOn(RiskController.class).getRisks(severity, probabilityOfOccurrence, description, details,
+                    contingencyPlanning, mitigationStrategy)).withRel("filtered"),
+                linkTo(DocumentationPathController.class).withRel("service-doc"),
+                Link.of("/v3/api-docs").withRel("service-desc")
+        );
         return ResponseEntity.ok(response);
     }
 
@@ -79,8 +141,10 @@ public class RiskController {
         riskJson.setId(riskIdentifier);
         riskService.createRisk(riskConverter.convertToRiskModel(riskJson));
         Link selfLink = linkTo(methodOn(RiskController.class).getRisk(riskIdentifier)).withSelfRel();
-        Link riskListLink = linkTo(RiskController.class).withRel("risk-list");
-        riskJson.add(selfLink, riskListLink);
+        Link riskListLink = linkTo(RiskController.class).withRel(IanaLinkRelations.COLLECTION);
+        Link apiDoc = linkTo(DocumentationPathController.class).withRel("service-doc");
+        Link apiDesc = Link.of("/v3/api-docs").withRel("service-desc");
+        riskJson.add(selfLink, riskListLink, apiDesc, apiDoc);
         return ResponseEntity.ok().body(riskJson);
     }
 

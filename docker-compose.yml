@@ -4,7 +4,7 @@ services:
 
   risk-repository:
     image: postgres:18-trixie
-    restart: always
+    restart: on-failure
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -13,7 +13,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db-data:/var/lib/postgresql/data/pgdat
+      - db-data:/var/lib/postgresql/data/pgdat:Z
   risk-manager:
     build: .
     restart: no

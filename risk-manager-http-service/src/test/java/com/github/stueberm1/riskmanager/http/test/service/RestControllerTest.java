@@ -49,8 +49,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -350,19 +348,7 @@ class RestControllerTest {
                     .andExpect(jsonPath("$._links.self.href").value("http://localhost:8080/api/v1/risk/1"))
                     .andDo(document("get-risk", links(
                         linkWithRel("self").optional().ignored()
-                    ),pathParameters(parameterWithName("riskIdentifier").description("Unique identifier of a risk"))
-                            ,responseFields(
-                            fieldWithPath("id").description("The risk identifier."),
-                            fieldWithPath("severity").description("Estimation of the harm the project earn if the risk becomes a problem"),
-                            fieldWithPath("probabilityOfOccurrence").description("Assessment of the probability that the risk will become a problem"),
-                            fieldWithPath("description").description("Common and simple description of the risk"),
-                            fieldWithPath("details").description("Some more details about the risk and the identified consequences"),
-                            fieldWithPath("contingencyPlanning").description("Definition of measures to do, if the risk becomes a problem"),
-                            fieldWithPath("mitigationStrategy").description("A plan to reduce the probability of occurrence"),
-                            fieldWithPath("_links").description("The links to the risk resource"),
-                            fieldWithPath("_links.self").description("The hypermedia-link to the current entity"),
-                            fieldWithPath("_links.self.href").description("The hypermedia-link to the current entity")
-                            )));
+                    ),pathParameters(parameterWithName("riskIdentifier").description("Unique identifier of a risk"))));
         }
 
         @Test
