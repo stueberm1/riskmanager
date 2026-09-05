@@ -10,3 +10,11 @@ asciidoc:
     # enable table-of-contents
     :toc: left
     :toclevels: 4
+ext:
+  collector:
+    run: 
+    - command: mvn javadoc:javadoc
+    scan:
+      clean: true
+      dir: target/apidocs
+      into: modules/api/attachments
