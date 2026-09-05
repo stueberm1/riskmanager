@@ -1,5 +1,5 @@
 .Architecture
 * xref:architecture:01_introduction_and_goals.adoc[Introduction and goals]
 * xref:architecture:02_architecture_constraints.adoc[Architecture contraints]
-* xref:architecture:03_contect_and_scope.adoc[Context and Scope]
+* xref:architecture:03_context_and_scope.adoc[Context and Scope]
 * xref:architecture:04_solution_strategy.adoc[Solution Strategy]
