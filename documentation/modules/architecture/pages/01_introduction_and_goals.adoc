@@ -1,13 +1,22 @@
 ifndef::imagesdir[:imagesdir: ../images]
-ifndef::relfileprefix[:relfileprefix: ../../]
+
 
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
 === Requirements Overview
 
+Is a tool to manage and track identified technical risks and -depts in agile driven software projects.
+It supports creation and assessment of risks. They can get prioritized and grouped to give them a context.
 
-The main purpose of the software system is described in the initial xref:{reffileprefix}README.adoc#main-purpose[Readme].
+Risks and risk-groups can get assigned to a project context, so the risks and technical depts can get managed for multiple
+projects in one instance.
+
+Riskmanager provides user-interfaces for direct interaction as well as apis for integration in any project management tool.
+
+Defined extension points allows to add custom and potentially proprietary tools and persistence options as
+plugin, without need to integrate them in the project directly.
+
 
 
 [[quality-goals]]

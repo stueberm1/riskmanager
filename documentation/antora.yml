@@ -1,5 +1,8 @@
 name: risk-manager
+title: risk-manager
 version: 0.1
+nav:
+- modules/architecture/nav.adoc
 asciidoc:
   attributes:
     :toc-title: table of contents
