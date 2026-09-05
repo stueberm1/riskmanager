@@ -1,0 +1,13 @@
+site:
+  title: Risk Manager Architecture
+  start_page: riskmanager::01_introduction_and_goals.adoc
+content:
+  sources:
+  - url: https://github.com/stueberm1/riskmanager.git
+    branches: [feature/risk-72-optimize-documentation-for-antora]
+    start_path: documentation
+    edit_url: false
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true

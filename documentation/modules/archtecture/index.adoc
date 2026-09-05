@@ -4,7 +4,7 @@
 // ====================================
 
 // configure EN settings for asciidoc
-include::src/config.adoc[]
+include::{partialsdir}/config.adoc[]
 
 = Risk Manager
 :revnumber: {revnumber}
@@ -13,7 +13,7 @@ include::src/config.adoc[]
 :toc-title: Table of Contents
 
 
-include::src/about-arc42.adoc[]
+include::{partialsdir}/about-arc42.adoc[]
 
 // horizontal line
 '''
