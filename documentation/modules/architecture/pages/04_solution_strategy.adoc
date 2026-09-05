@@ -4,7 +4,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 == Solution Strategy
 
 .Solution strategy overview
-image::04_solution_strategy/service_stragegy.png[solution overview]
+image::04_solution_strategy/service_stragegy.drawio.png[solution overview]
 
 The system gets a business core build around an abstract domain model defining the `Risk` and
 its core constraints (states and invariants).

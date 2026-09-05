@@ -5,11 +5,13 @@ nav:
 - modules/architecture/nav.adoc
 asciidoc:
   attributes:
-    :toc-title: table of contents
+    toc-title: table of contents
 
     # enable table-of-contents
-    :toc: left
-    :toclevels: 4
+    toc: left
+    toclevels: 4
+    sectnums: ''
+    
 ext:
   collector:
     run: 
