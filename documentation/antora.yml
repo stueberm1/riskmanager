@@ -10,7 +10,7 @@ asciidoc:
     # enable table-of-contents
     toc: left
     toclevels: 4
-    sectnums: ''
+
     
 ext:
   collector:

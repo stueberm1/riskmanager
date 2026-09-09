@@ -1,0 +1,36 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-building-block-view]]
+
+
+== Building Block View
+
+=== Level 1
+
+// level-1 view
+xref:05_building_block_view/level1/level-1-building-blocks-overview.adoc[Level 1 System view]
+
+
+=== Level 2
+
+<<<
+// whitebox-riskmanager-core
+xref:05_building_block_view/level2/whitebox-risk-manager-core.adoc[Core system]
+
+<<<
+// white box data repository
+xref:05_building_block_view/level2/whitebox-risk-manager-data-jpa.adoc[Risk Repository]
+
+=== Level 3
+==== Core
+<<<
+// whitebox-riskmanager-core-find-risk
+xref:05_building_block_view/level3/core-system/whitebox-risk-manager-core-read-risk.adoc[Read risk use case]
+
+<<<
+// whitebox-risk-manager-core.update-risk
+xref:05_building_block_view/level3/core-system/whitebox-risk-manager-core-update-risk.adoc[Update Risk use case]
+
+==== Repository
+// whitebox data repository.data-model
+xref:05_building_block_view/level3/repository/whitebox-risk-manager-data-jpa-data-model.adoc[Risk data model]

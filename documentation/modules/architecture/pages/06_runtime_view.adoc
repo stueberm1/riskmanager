@@ -1,0 +1,7 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-runtime-view]]
+== Runtime View
+<<<
+// create risk
+xref:06_runtime_view/runtime-description-create-risk.adoc[Scenario 1: Create new risk]
